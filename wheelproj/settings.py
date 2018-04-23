@@ -138,6 +138,28 @@ STATIC_URL = '/static/'
 
 DATE_INPUT_FORMATS = ('%d-%m-%Y','%Y-%m-%d')
 
+SECURE_SSL_REDIRECT = True
+X_FRAME_OPTIONS = 'ALLOWALL'
+CSRF_TRUSTED_ORIGINS = ['escpeurope.blackboard.com']
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+SESSION_COOKIE_HTTPONLY = True
+
+AUTHENTICATION_BACKENDS = [
+  'django.contrib.auth.backends.ModelBackend',
+  'lti_provider.auth.LTIBackend',
+]
+
+PYLTI_CONFIG = {
+    'consumers': {
+        'escpdigital.pythonanywhere.com': {
+            'secret': 'secret'
+        }
+    }
+}
+
+
 LTI_TOOL_CONFIGURATION = {
     'title': 'Sample LTI Tool',
     'description': 'This tool includes launch, navigation and assignments',
