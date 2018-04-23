@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'base',
     'helpers',
-    'lti_provider',
+    #'lti_provider',
 ]
 
 MIDDLEWARE = [
