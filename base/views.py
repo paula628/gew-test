@@ -29,6 +29,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 
 
+"""
 class IndexView(TemplateView):
     template_name = 'base/index2.html'
 
@@ -60,7 +61,7 @@ class LTIAssignment2View(LTIAuthMixin, LoginRequiredMixin, TemplateView):
         }
 
 
-
+"""
 
 
 def login(request):
