@@ -21,7 +21,7 @@ from .models import Emotion, Answer, TempUser, Question
 from .forms import QuestionForm, AnswerForm, TempUserForm
 
 from django.views.generic.base import TemplateView
-from lti_provider.mixins import LTIAuthMixin
+#from lti_provider.mixins import LTIAuthMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 

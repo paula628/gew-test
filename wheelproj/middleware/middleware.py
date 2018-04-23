@@ -28,6 +28,12 @@ class LTIAuthMiddleware(object):
     If the request is not an LTI launch request, do nothing.
     """
 
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
     def process_request(self, request):
         print request.POST, 'xxxx'
         logger.debug('inside process_request %s' % request.path)
