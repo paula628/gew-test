@@ -1,0 +1,216 @@
+{% extends 'base/index.html' %}
+{% load helper_extras %}
+
+{% block page_head %} Geneva Emotion Wheel {% endblock %}
+
+{% block content %}
+  {{ block.super }}
+<div id='login-modal' class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+  <div class="modal-content">
+<div class='modal-body'>
+
+
+      <div class="row">
+      <div class="col-md-12">
+        <div class="panel panel-login">
+          <div class="panel-heading">
+            <div class="row">
+            {% if messages %}
+                <ul class="messages ul-messages">
+                        {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                </ul>
+          {% endif %}
+          {% for field in create_user_form.fields %}
+{% if field.errors %}
+            {% for error in field.errors %}
+              <li><a href="#id_{{ field.name }}" class="error">{{ error|escape }}</a></li>
+            {% endfor %}
+          {% endif %}
+          {% endfor %}
+              <div class="col-xs-4">
+                <a href="#" class="active" id="student-form-link">Student</a>
+              </div>
+              <div class="col-xs-4">
+                <a href="#" id="teacher-form-link">Teacher</a>
+              </div>
+              <div class="col-xs-4">
+                <a href="#" id="register-form-link">Register</a>
+              </div>
+            </div>
+            <hr>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-lg-12">
+
+          <form id='student-form' name='student-form' action='{%url "base:login" %}' method='POST'>
+              <div class='form-group'>
+                  <div class='row'>
+                    {% csrf_token %}
+                    <label>Session Code</label>
+                    <input name='code' class='form-control'/>
+                    <label class='form-inline'>Name</label>
+                    <select class='form-control' id='student' name='student'>
+                        <option value="0">Anonymous</option>
+                        {% if students %}
+                            {% for student in students %}
+                                <option value="{{student.id}}">{{student.name}}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                  </div>
+              </div>
+                  
+              <div class="form-group">
+                    <div class="row">
+                         <input type="submit" class="btn btn-register btn-md form-control"/>
+                    </div>
+              </div>
+          </form>
+
+
+          <form id='teacher-form' name='teacher-form' action='{%url "base:login" %}' method='POST' style="display: none;">
+          <div class='form-group'>
+              <div class='row'>
+                {% csrf_token %}
+                <label>Username</label>
+                <input name='user' class='form-control' type='password'/>
+              </div>
+          </div>
+              
+          <div class="form-group">
+                <div class="row">
+                     <input type="submit" class="btn btn-login btn-md form-control"/>
+                </div>
+          </div>
+          </form>
+
+          <form id='register-form' name='register-form' action='{%url "base:create_user" %}' method='POST' style="display: none;">
+          <div class='form-group'>
+              <div class='row'>
+                <h4>Create New User</h4>
+                {% csrf_token %}
+                {% for field in create_user_form.visible_fields %}
+                  {{ field.label }}
+                  {{ field|addcss:'form-control' }}
+                  
+                {% endfor %}
+              </div>
+          </div>
+              
+          <div class="form-group">
+                <div class="row">
+                     <input type="submit" class="btn btn-login btn-md form-control"/>
+                </div>
+          </div>
+          </form>
+
+              <!--  <form id="teacher-form" action="https://phpoll.com/register/process" method="post" role="form" style="display: none;">
+                  <div class="form-group">
+                    <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+                  </div>
+                  <div class="form-group">
+                    <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+                  </div>
+                  <div class="form-group">
+                    <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+                  </div>
+                  <div class="form-group">
+                    <input type="password" name="confirm-password" id="confirm-password" tabindex="2" class="form-control" placeholder="Confirm Password">
+                  </div>
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-sm-6 col-sm-offset-3">
+                        <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
+                      </div>
+                    </div>
+                  </div>
+                </form>-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  
+  </div>
+  </div>
+  </div>
+  </div>
+
+<!--
+<div id='login-modal' class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Welcome Back</h5>
+      </div>
+      <div class="modal-body">
+        <form id='login' name='login-form' action='{%url "base:login" %}' method='POST'>
+        	{% csrf_token %}
+        	<label>Username</label>
+        	<input name='user' type='text' class='form-control'/>
+      </div>
+      <div class="modal-footer">
+      		<input type="submit" class="btn btn-primary btn-md"/>
+      </div>
+        </form> 
+    </div>
+  </div>
+</div>
+-->
+
+ {% endblock %}
+
+ {% block javascript %}
+<script type='text/javascript'>
+	$('#login-modal').modal('show').on('hide.bs.modal', function(e){
+      e.preventDefault();
+    });
+</script>
+
+<script type='text/javascript'>
+
+$(function() {
+
+    $('#student-form-link').click(function(e) {
+    $("#student-form").delay(100).fadeIn(100);
+    $("#teacher-form").fadeOut(100);
+    $('#teacher-form-link').removeClass('active');
+    $("#register-form").fadeOut(100);
+    $('#register-form-link').removeClass('active');
+    $(this).addClass('active');
+    e.preventDefault();
+  });
+
+  $('#teacher-form-link').click(function(e) {
+    $("#teacher-form").delay(100).fadeIn(100);
+    $("#student-form").fadeOut(100);
+    $('#student-form-link').removeClass('active');
+    $("#register-form").fadeOut(10);
+    $('#register-form-link').removeClass('active');
+    $(this).addClass('active');
+    e.preventDefault();
+  });
+
+  $('#register-form-link').click(function(e) {
+    $("#register-form").delay(100).fadeIn(100);
+    $("#student-form").fadeOut(100);
+    $('#student-form-link').removeClass('active');
+    $("#teacher-form").fadeOut(100);
+    $('#teacher-form-link').removeClass('active');
+    $(this).addClass('active');
+    e.preventDefault();
+  });
+
+});
+</script>
+
+
+ {% endblock %}
+
+

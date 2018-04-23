@@ -1,0 +1,23 @@
+{% load helper_extras %}
+
+{% if object_list.has_other_pages %}
+  <ul class="pagination">
+    {% if object_list.has_previous %}
+      <li><a href="?page={{ object_list.previous_page_number }}&{% relative_url i 'page' request.GET.urlencode %}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in object_list.paginator.page_range %}
+      {% if object_list.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="{% relative_url i 'page' request.GET.urlencode %}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if object_list.has_next %}
+      <li><a href="?page={{ object_list.next_page_number }}&{% relative_url i 'page' request.GET.urlencode %}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}

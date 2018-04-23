@@ -1,0 +1,68 @@
+{% extends 'base/index.html' %}
+{% load helper_extras %}
+
+{% block page_head %} {{ title }} {% endblock %}
+{% block message %} {{ title }} {% endblock %}
+
+{% block content %}
+  {{ block.super }}
+
+<div class='col-md-8'>
+  <div class="panel panel-default">
+    <div class="panel-heading">Question Form</div>
+    <div class='panel-body'>
+      <div class="table-responsive">
+        <form method='POST' action=''>
+        {% csrf_token %}
+        {% for field in form.hidden_fields %}
+          {{ field }}
+        {% endfor %}
+        {% for field in form.visible_fields %}
+        <div class="form-group col-md-12">
+          <label>{{ field.label }}</label>
+          {{ field|addcss:'form-control' }}
+        </div>
+        {% endfor %}
+        {% if question %}
+        <div class="form-group col-md-12">
+          <label>Code&nbsp;</label>
+          <h4 style='display:inline;'>{{ question.code }}</h4>
+        </div>
+        {% endif %}
+
+        <div class='col-sm-4 col-md-2'>
+        <input class="btn btn-primary form-control" type="submit" value="Save"/>
+        </div>
+      </form>
+      </div>
+    </div>
+</div>
+<a type='button' href="{% url 'base:question_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+{% if question %}
+  <button class='btn btn-default pull-right' id='delete-question' data-href='{% url "base:delete_question" question.id %}'>Delete</button>
+{% endif %}
+</div>
+ {% endblock %}
+
+
+ {% block javascript %}
+    {{ block.super }}
+
+  <script type='text/javascript'>
+  $('#delete-question').on('click', function(){
+    var href = $(this).data('href');
+    $('#delete-modal').modal('show');
+    $('#delete-form').attr('action', href);
+
+  })
+  </script>
+
+  <script type='text/javascript'>
+$(document).ready(function() { 
+  var user = '{{ temp_user.id }}';
+  $('#id_created_by').val(user);
+
+});
+  </script>
+
+ {% endblock %}

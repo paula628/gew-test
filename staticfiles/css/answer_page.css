@@ -1,0 +1,27 @@
+
+
+html, body {
+			width: 100%;
+			height: 100%;
+			margin: 0px;
+			border: 0;
+			overflow: hidden; /*  Disable scrollbars */
+			display: block;  /* No floating content on sides */
+			min-width: 400px;
+		}
+
+.question-text {
+	font-weight: bold;
+	font-size:40px;
+	margin-top:22px;
+	}
+
+
+
+div.growlUI { background: url(check48.png) no-repeat 10px 10px }
+
+div.growlUI h1, div.growlUI h2 {
+    color: white;
+    padding: 5px 5px 5px 75px;
+    text-align: left
+	}

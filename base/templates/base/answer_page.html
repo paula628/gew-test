@@ -1,0 +1,755 @@
+{% extends 'base/index.html' %}
+{% load static %}
+
+
+{% block page_head %} {{ title }} {% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link rel='stylesheet' src='{% static "css/answer_page.css" %}'></link>
+    <style>
+
+    #main-circle {
+            height: 0;
+            margin: auto;
+            -webkit-transform: rotate(11.25deg);
+            -moz-border-radius: 50%;
+            -webkit-border-radius: 50%;
+            border-radius: 50%;
+            overflow:auto;
+            box-sizing: border-box;
+            pointer-events:none;
+            }
+
+    
+
+
+    .quadrant > .circle > p {
+        text-align:center;
+        margin:-8px;
+        font-size:12px;}
+
+
+    @media(max-width:980px){
+        #main-circle {
+            width:100%;
+            padding-bottom:100%;
+            margin-top:1%;
+        }
+
+
+        .quadrant > .circle > p {font-size:8.5px;}
+    }
+
+
+    @media (min-width:981px) and (max-width:1550px){
+            #main-circle {
+                width: 90%;
+                padding-bottom: 90%;
+            }
+
+            #center_buttons_container {
+                padding-top:45%;
+                margin-bottom:-50%;
+                position:relative;
+            }
+
+            #center_buttons_container > button {
+                width:78%;
+                height:90%;
+            }
+
+
+        
+    }
+
+    @media(min-width:1551px){
+        #main-circle {
+            width:70%;
+            padding-bottom:70%;
+        }
+        #center_buttons_container {
+                padding-top:32%;
+                margin-bottom:-38%;
+                position:relative;
+            }
+        #center_buttons_container > button {
+                width:77%;
+                height:95%;
+            }
+    }
+    .circle {
+            border-radius: 50%;
+            height: 100%;
+            width: 100%;
+            }
+
+                .circle > .circle {
+                    position: absolute;
+                    height: 13%;
+                    width: 13%;
+                    left: 43%;
+                    box-sizing: border-box;
+                }
+
+
+
+            .quadrant {
+                height: 100%;
+                left: 0px;
+                position: absolute;
+                top: 0px;
+                width: 100%;
+            }
+            .quadrant > .circle { position: absolute;}
+            .quadrant > .circle:nth-of-type(2) { 
+                transform: rotate(22.5deg);}
+            .quadrant > .circle:nth-of-type(3) { 
+                transform: rotate(45deg);}
+            .quadrant > .circle:nth-of-type(4) { 
+                transform: rotate(67.5deg);}
+
+
+            * > .quadrant:nth-of-type(2) { transform: rotate(90deg); }
+            * > .quadrant:nth-of-type(3) { transform: rotate(180deg); }
+            * > .quadrant:nth-of-type(4) { transform: rotate(270deg); }
+
+
+            .inner-circle {
+                height: 60%;
+                left:20%;
+                top: 20%;
+                width: 60%;
+                box-sizing: border-box;
+            }
+
+
+
+  /* colours */
+    .hope { background: #b7f603;}
+    .interest { background: #51dc00;}
+    .surprise { background: #00ae00;}
+    .sadness { background: #01ebd2; z-index:190;}
+    .fear { background: #06e0e5;}
+    .shame { background: #0ca7f3;}
+    .guilt { background: #128aef;}
+    .envy { background: #1756ff;}
+    .disgust { background: #7131c8;}
+    .contempt { background: #aa338b;}
+    .anger { background: #c53969;}
+    .pride { background: #fb0000;}
+    .elation { background: #e04101;}
+    .joy { background: #f8881b;}
+    .satisfaction { background: #fafd00;}
+    .relief { background: #eafe0f;}
+
+/*gradient */
+    .four {opacity: 1.0;}
+    .three {opacity: 0.85;}
+    .two {opacity: 0.75;}
+    .one {opacity: 0.6;}
+
+    
+
+
+    </style>
+{% endblock %}
+
+
+{% block content %}
+{{ block.super }}
+
+
+<div class='col-md-offset-2 col-md-8' align='center'>
+
+    <div id='instructions'>
+        <p>Each radian represents an emotion. The size of the circles in each radian represent intensity of that emotion.<br/> Select the circle that best fits your response to the question below.</p>
+        <div id='question-text' style='margin:6px;font-weight:bold;font-size:30px;'>{{ question }}</div>
+        <div class='answer_message'>{{ message }}</div>
+        {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+        {% endfor %}
+    </div>
+
+
+
+<div id='center_buttons_container' class='col-md-offset-5 col-md-2 center-buttons' style='text-align:center;'>
+    <button id='id_none' class='btn btn-default btn-xs form-control' style='border-radius: 7px;' href='#'>None</button><br/>
+    <button id='id_other' class='btn btn-default btn-xs form-control' style='border-radius: 7px;' href='#' data-href="{% url 'base:answer_page' question.id %}">Other</button>
+</div>
+
+
+<div id="main-circle" class="circle">
+
+            <!-- First quadrant. -->
+
+            <div class="quadrant">
+                <div class="circle">
+                    <p> pride </p>
+                    <div class="circle pride trigger label" id='pride-4'> </div>
+
+                </div>
+
+                <div class="circle">
+                <p>elation</p>
+                    <div class="circle elation trigger label" id='elation-4'> </div>
+                </div>
+
+                <div class="circle">
+                <p>joy</p>
+                    <div class="circle joy trigger label" id='joy-4'> </div>
+                </div>
+                <div class="circle">
+                <p>satisfaction</p>
+                    <div class="circle satisfaction trigger label" id='satisfaction-4'> </div>
+                </div>
+            </div>
+
+            
+
+            <!-- Second quadrant. -->
+
+            <div class="quadrant">
+                <div class="circle">
+                <p>relief</p>
+                    <div class="circle relief trigger label" id='relief-4'> </div>
+                </div>
+
+                <div class="circle">
+                <p>hope</p>
+                    <div id='hope-4' class="circle hope trigger label" id='hope-4'> </div>
+                </div>
+
+                <div class="circle">
+                <p>interest</p>
+                    <div class="circle interest trigger label" id='interest-4'> </div>
+                </div>
+                <div class="circle">
+                <p>surprise</p>
+                    <div id='surprise-4' class="circle surprise trigger label"> </div>
+                </div>
+            </div>
+
+            
+
+            <!-- Third quadrant. -->
+
+            <div class="quadrant">
+                <div class="circle">
+                <p>sadness</p>
+                    <div class="circle sadness trigger label" id='sadness-4'> </div>
+                </div>
+
+                <div class="circle">
+                <p>fear</p>
+                    <div class="circle fear trigger label" id='fear-4'> </div>
+                </div>
+
+                <div class="circle">
+                <p>shame</p>
+                    <div class="circle shame trigger label" id='shame-4'> </div>
+                </div>
+                <div class="circle">
+                <p>guilt</p>
+                    <div class="circle guilt trigger label" id='guilt-4'> </div>
+                </div>
+
+            </div>
+
+
+            <!-- Fourth quadrant. -->
+
+            <div class="quadrant">
+                <div class="circle">
+                <p>envy</p>
+                    <div class="circle envy trigger label" id='envy-4'> </div>
+                </div>
+
+                <div class="circle">
+                <p>disgust</p>
+                    <div class="circle disgust trigger label" id='disgust-4'> </div>
+                </div>
+
+                <div class="circle">
+                <p>contempt</p>
+                    <div class="circle contempt trigger label" id='contempt-4'> </div>
+                </div>
+                <div class="circle">
+                <p>anger</p>
+                    <div class="circle anger trigger label" id='anger-4'> </div>
+                </div>
+
+            </div>
+
+       
+
+            <!-- First inner circle -->
+
+            <div class="quadrant inner-circle three">
+
+                <!-- First quadrant. -->
+
+                <div class="quadrant">
+                    <div class="circle">
+                        <div id='pride-3' class="circle pride trigger" id='pride-3'> </div>
+                    </div>
+
+                    <div class="circle">
+                        <div class="circle elation trigger" id='elation-3'></div>
+                    </div>
+
+                    <div class="circle">
+                        <div class="circle joy trigger" id='joy-3'></div>
+                    </div>
+                    <div class="circle">
+                        <div class="circle satisfaction trigger" id='satisfaction-3'></div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Second quadrant. -->
+
+                <div class="quadrant">
+                    <div class="circle">
+                        <div class="circle relief trigger" id='relief-3'></div>
+                    </div>
+
+                    <div class="circle">
+                        <div class="circle hope trigger" id='hope-3'></div>
+                    </div>
+
+                    <div class="circle">
+                        <div class="circle interest trigger" id='interest-3'></div>
+                    </div>
+                    <div class="circle">
+                        <div class="circle surprise trigger" id='surprise-3'></div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Third quadrant. -->
+
+                <div class="quadrant">
+                    <div class="circle">
+                        <div class="circle sadness trigger" id='sadness-3'></div>
+                    </div>
+
+                    <div class="circle">
+                        <div class="circle fear trigger" id='fear-3'></div>
+                    </div>
+
+                    <div class="circle">
+                        <div class="circle shame trigger" id='shame-3'></div>
+                    </div>
+                    <div class="circle">
+                        <div class="circle guilt trigger" id='guilt-3'></div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Fourth quadrant. -->
+
+                <div class="quadrant">
+                    <div class="circle">
+                        <div id='envy-3' class="circle envy trigger"></div>
+                    </div>
+
+                    <div class="circle">
+                        <div id='disgust-3' class="circle disgust trigger"></div>
+                    </div>
+
+                    <div class="circle">
+                        <div id='contempt-3' class="trigger circle contempt"></div>
+                    </div>
+                    <div class="circle">
+                        <div id='anger-3' class="circle anger trigger"></div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Second inner circle -->
+
+                <div class="quadrant inner-circle two">
+
+                    <!-- First quadrant. -->
+
+                    <div class="quadrant">
+                        <div class="circle">
+                            <div class="circle pride trigger" id='pride-2'></div>
+                        </div>
+
+                        <div class="circle">
+                            <div class="circle elation trigger" id='elation-2'></div>
+                        </div>
+
+                        <div class="circle">
+                            <div class="circle joy trigger" id='joy-2'></div>
+                        </div>
+                        <div class="circle">
+                            <div class="circle satisfaction trigger" id='satisfaction-2'></div>
+                        </div>
+                    </div>
+
+                    
+                    <!-- Second quadrant. -->
+
+                    <div class="quadrant">
+                        <div class="circle">
+                            <div class="circle relief trigger" id='relief-2'></div>
+                        </div>
+                        <div class="circle">
+                            <div class="circle hope trigger" id='hope-2'></div>
+                        </div>
+                        <div class="circle">
+                            <div class="circle interest trigger" id='interest-2'></div>
+                        </div>
+                        <div class="circle">
+                            <div class="circle surprise trigger" id='surprise-2'></div>
+                        </div>
+                    </div>
+
+                    
+                    <!-- Third quadrant. -->
+                    <div class="quadrant">
+                        <div class="circle">
+                            <div class="circle sadness trigger" id='sadness-2'></div>
+                        </div>
+                        <div class="circle">
+                            <div class="circle fear trigger" id='fear-2'></div>
+                        </div>
+                        <div class="circle">
+                            <div class="circle shame trigger" id='shame-2'></div>
+                        </div>
+                        <div class="circle">
+                            <div class="circle guilt trigger" id='guilt-2'></div>
+                        </div>
+                    </div>
+
+
+                    <!-- Fourth quadrant. -->
+                    <div class="quadrant">
+                        <div class="circle">
+                            <div class="circle envy trigger" id='envy-2'></div>
+                        </div>
+                        <div class="circle">
+                            <div class="circle disgust trigger" id='disgust-2'></div>
+                        </div>
+                        <div class="circle">
+                            <div class="circle contempt trigger" id='contempt-2'></div>
+                        </div>
+                        <div class="circle">
+                            <div class="circle anger trigger" id='anger-2'></div>
+                        </div>
+                    </div>
+
+                    
+
+                    <!-- Second inner circle -->
+
+                    <div class="quadrant inner-circle one">
+
+                        <!-- First quadrant. -->
+                        <div class="quadrant">
+                            <div class="circle">
+                                <div class="circle pride trigger" id='pride-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle elation trigger" id='elation-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle joy trigger" id='joy-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle satisfaction trigger" id='satisfaction-1'></div>
+                            </div>
+                        </div>
+
+                        
+
+                        <!-- Second quadrant. -->
+
+                        <div class="quadrant">
+                            <div class="circle">
+                                <div class="circle relief trigger" id='relief-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle hope trigger" id='hope-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle interest trigger" id='interest-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle surprise trigger" id='surprise-1'></div>
+                            </div>
+
+                        </div>
+
+                        
+
+                        <!-- Third quadrant. -->
+                        <div class="quadrant">
+                            <div class="circle" >
+                                <div class="circle sadness trigger" id='sadness-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle fear trigger" id='fear-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle shame trigger" id='shame-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle guilt trigger" id='guilt-1'></div>
+                            </div>
+                        </div>
+                        
+
+                        <!-- Fourth quadrant. -->
+
+                        <div class="quadrant">
+                            <div class="circle" >
+                                <div class="circle envy trigger" id='envy-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle disgust trigger" id='disgust-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle contempt trigger" id='contempt-1'></div>
+                            </div>
+                            <div class="circle">
+                                <div class="circle anger trigger" id='anger-1'></div>
+                            </div>
+                        </div>
+
+                    </div> <!-- third inner circle -->
+
+                </div> <!-- second inner circle -->
+
+            </div> <!-- first inner circle -->
+
+
+
+        </div> <!-- main -->
+
+    <div class='col-md-offset-3 col-md-6' id='container2' align='center'>
+
+    </div>
+
+
+    <div class='col-md-offset-3 col-md-6' id='id_answer_form' align='center'>
+        <form id='answer_form' method='POST' action="{% url 'base:answer_page' question.id %}" class='form-inline'>
+            {% csrf_token %} 
+            <p id='selection'></p>
+            <div class='col-md-12' id='other_selected'>
+                <p>Please describe the other emotion.  <input type='text' maxlength="50" name='other_text' style="width:100%;" class='form-control'/></p>
+            </div>
+            {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+            {% endfor %}
+            {% if not question.allow_anonymous %}
+                <input type='number' name='student' id='id_student' value='{{ student.id }}' hidden/>
+            {% endif %}
+            <input type='submit' class='btn btn-success form-control'/>
+            </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+
+<script type='text/javascript'>
+function moveElements() {
+  var domWidth = $(window).width();
+    container2 = $('#container2'),
+    instruction_container = $('#instructions'),
+    center_buttons = $('#center_buttons_container')
+
+  if (domWidth < 980) {
+    container2.append(center_buttons);
+  } else {
+    instruction_container.append(center_buttons);
+  } 
+}
+
+$(document).ready(function() {
+moveElements();   
+$(window).resize(function() {
+    moveElements();
+});
+
+});
+</script>
+
+<script type='text/javascript'>
+$(document).ready(function() { 
+    var elements = document.getElementsByClassName("label");
+    for (var i=0; i < elements.length; i++) {
+        boundingRect = elements[i].getBoundingClientRect();
+        var circleWidth = boundingRect.right - boundingRect.left;
+        var radius = (circleWidth/2) - 500;
+        var xCenter = boundingRect.x + radius;
+        var yCenter = boundingRect.y + radius;
+
+    }
+}); 
+
+</script>
+
+
+
+<script type='text/javascript'>
+/* Changes arrow to hand pointer if hovered over a circle. Not yet the best implementation */
+function checkPointerLocation(event) {
+    var location = 'out';
+    var elements = document.getElementsByClassName("trigger");
+    for (var i=0; i < elements.length; i++) {
+        boundingRect = elements[i].getBoundingClientRect();
+        var circleWidth = boundingRect.right - boundingRect.left;
+        var radius = circleWidth/2;
+        if (radius > 18) {
+            var radius_small = radius - 11;
+        } else {
+            var radius_small = radius
+        }
+       
+        var xCenter = boundingRect.x + radius;
+        var yCenter = boundingRect.y + radius;
+        
+        /*var xC = (radius * (Math.cos(Math.radians(11.5)))) + (boundingRect.x + radius)
+        var yC = (radius * (Math.sin(Math.radians(11.5)))) + (boundingRect.y + radius)*/
+
+        var clickX = event.clientX;
+        var clickY = event.clientY;
+        var a = Math.pow(clickX - xCenter, 2);
+        var b = Math.pow(clickY - yCenter, 2);
+        var d = Math.sqrt(a + b);
+        if(d < radius_small) {
+            var location = 'in';
+            return location;
+        }
+        
+    }
+    return location;
+
+}
+
+document.body.addEventListener("mousemove", function(event) {
+    setTimeout(function() {
+        var location = checkPointerLocation(event);
+        if (location == 'in'){
+            document.body.style.cursor = "pointer";
+        } else {
+            document.body.style.cursor = 'default';
+        }
+    }, 20);
+    
+});
+
+
+</script>
+
+<script type='text/javascript'>
+/* Inputs values when a circle is clicked */
+Math.radians = function(degrees) {
+      return degrees * Math.PI / 180;
+    };
+
+function printMousePos(event) {
+    var elements = document.getElementsByClassName("trigger");
+    for (var i=0; i < elements.length; i++) {
+
+        /* circle location */
+        boundingRect = elements[i].getBoundingClientRect();
+        /*console.log(boundingRect);*/
+        var circleWidth = boundingRect.bottom - boundingRect.top;
+        var radius = circleWidth/2 ;
+        if (radius > 18) {
+            var radius_small = radius - 11;
+        } else {
+            var radius_small = radius
+        }
+        
+        var xCenter = boundingRect.x + radius;
+        var yCenter = boundingRect.y + radius;
+
+       /* var xCenter = (radius * (Math.cos(Math.radians(11.5)))) + (boundingRect.x + radius)
+        var yCenter = (radius * (Math.sin(Math.radians(11.5)))) + (boundingRect.y + radius)*/
+
+        /* mouse click location */
+        var clickX = event.clientX;
+        var clickY = event.clientY;
+        /*console.log(clickX + ' ' + xCenter + ',,' + clickY + ' ' + yCenter)*/
+
+        var a = Math.pow(clickX - xCenter, 2);
+        var b = Math.pow(clickY - yCenter, 2);
+        var d = Math.sqrt(a + b);
+
+
+        if(d < radius_small) {
+            $('#other_selected').hide();
+            var str_id = elements[i].id.split('-')
+            selection = document.getElementById('selection')
+            var emotion = str_id[0]
+            var intensity = str_id[1]
+            var student = "{{ student.id }}"
+            var msg = "<strong>" + emotion.toUpperCase() + "</strong>; intensity: <strong>" + intensity+ "</strong>"
+            $("#selection").html(msg);
+
+            $('#id_emotion').val(emotion);
+            $('#id_intensity').val(intensity);
+            $('#id_student').val(student);
+        }
+    }
+}
+
+document.addEventListener("click", printMousePos);
+</script>
+
+<script>
+    $("#other-confirm").click(function(e) {
+        var otherText = $('#other_text')
+        $("#selection").html('<strong>Other</strong>: ' + otherText);
+
+        
+    });
+
+    $("#other-form").submit(function(event) {
+        event.preventDefault();
+    });
+</script>
+
+
+<script type='text/javascript'>
+$(document).ready(function() { 
+    $('#other_selected').hide();
+    /* functiionality for None and Other buttons */
+    $('#id_none').click(function() {
+        $('#id_emotion').val('none');
+        $('#id_intensity').val(0);
+        var student = "{{ student.id }}"
+        $('#id_student').val(student);
+        $("#selection").html('<strong>None of the above</strong>');
+        $('#other_selected').hide();
+    });
+
+     $('#id_other').click(function() {
+        $('#id_emotion').val('other');
+        $('#id_intensity').val(0);
+        var student = "{{ student.id }}"
+        $('#id_student').val(student);
+        $("#selection").html('<strong>Other</strong>');
+        $('#other_selected').show();
+    });
+}); 
+
+</script>
+
+{% endblock %}
+

@@ -1,0 +1,92 @@
+{% extends 'base/index.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block page_head %} {{ title }} {% endblock %}
+
+{% block content %}
+  {{ block.super }}
+<div class='row'>
+    <div class='col-md-4'>
+        <h4>Intensity Per Emotion (Average)</h4>
+        <canvas id="myChart" width="150" height="150"></canvas>
+    </div>
+    <div class='col-md-4'>
+        <h4>Number of Responses Per Emotion </h4>
+        <canvas id="myChart2" width="150" height="150"></canvas>
+    </div>
+</div>
+
+<div class='row'>
+     <div class='col-md-12 back'>
+    {% if student %}
+        <a type='button' href="{% url 'base:student_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+    {% else %}
+        {% if tag %}
+        <a type='button' href="{% url 'base:tag_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+        {% else %}
+        <a type='button' href="{% url 'base:question_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+        {% endif %}
+    {% endif %}
+    </div>
+</div>
+<script>
+var ctx = document.getElementById("myChart").getContext('2d');
+var labels = {{ emotion_labels|safe }};
+var averages = {{ averages|safe }};
+var colors = {{ colors|safe }};
+
+var myChart = new Chart(ctx, {
+    type: 'polarArea',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: '# of Votes',
+            data: averages,
+            backgroundColor: colors,
+            borderColor: colors,
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+</script>
+
+<script>
+var ctx = document.getElementById("myChart2").getContext('2d');
+var labels = {{ emotion_labels|safe }};
+var votes = {{ count|safe }};
+
+var myChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: '# of Responses',
+            data: votes,
+            backgroundColor: 'blue',
+            borderColor: 'blue',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+</script>
+
+{% endblock %}

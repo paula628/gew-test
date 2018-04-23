@@ -1,0 +1,49 @@
+{% extends 'base/index.html' %}
+
+{% block page_head %} {{ title }} {% endblock %}
+
+{% block content %}
+  {{ block.super }}
+
+<div class='col-md-10'>
+<div class="panel panel-default">
+  <div class="panel-heading">Tags (Total Count: {{ count }})</div>
+  <div class='panel-body'>
+    <div class="table-responsive">
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Tag</th>
+          <th scope="col"># of Questions</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for t in tags %}
+        <tr>
+          <td scope="row">{{ forloop.counter }} </th>
+          <td>{{ t.tag }}</td>
+          <td>{{ t.tag_count }}</td>
+          <td>
+            <a class='btn btn-primary btn-sm' href="{% url 'base:answers_by_tag_graph' t.tag %}" class='btn btn-primary btn-sm'>view graphs</a>
+            <a href="{% url 'base:questions_by_tag' t.tag %}" class='btn btn-info btn-sm'>list questions</a>
+            <a href="{% url 'base:answer_list_by_filter' mode='tag' mode_id=t.tag %}" class='btn btn-info btn-sm'>list answers</a>
+          </td>
+        </tr>
+      {% endfor %}
+
+        
+      </tbody>
+    </table>
+    </div>
+    </div>
+</div>
+ {% endblock %}
+
+
+ {% block javascript %}
+    {{ block.super }}
+
+ {% endblock %}

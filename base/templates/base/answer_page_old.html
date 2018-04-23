@@ -1,0 +1,247 @@
+{% extends 'base/index.html' %}
+{% load static %}
+
+
+{% block page_head %} {{ title }} {% endblock %}
+
+{% block extra_head %}
+    <link rel='stylesheet' src='{% static "css/answer_page.css" %}'></link>
+{% endblock %}
+
+
+{% block content %}
+<div class='col-md-12' align='center'>
+	<form id='answer_form' method='POST' action="{% url 'base:answer_page' question.id %}">
+		{% csrf_token %} 
+		<input id='intensity' type='number' name='intensity' hidden/>
+		<input id='emotion' type='text' name='emotion' hidden/>
+		<input id='question' type='number' name='question' value="{{ question.id }}" hidden/>
+		<div style='margin-top:15px;'>
+		<div class='form-group'>
+		<div class='col-md-2'><label>Name</label></div>
+		<div class='col-md-4'>
+		<select class='form-control' id='student' name='student'>
+			{% if students %}
+				{% for student in students %}
+					<option value="{{student.id}}">{{student.name}}</option>
+				{% endfor %}
+			{% endif %}
+		</select>
+		</div>
+		</div>
+		<small>Each radian represents an emotion.<br/>The size of the circles in each radian represent intensity of that emotion. <br/>Select the circle that best fits your response to the question below.</small>
+		<div id='question-text' style='margin-top:6px;font-weight:bold;font-size:30px;'>{{ question }}</div>
+		</div>
+		<input type='submit' hidden/>
+	</form>
+		<div class='answer_message'></div>
+</div>
+
+	<canvas id="canvas" width="100%" height="100%"></canvas>
+<script>
+	var canvas = document.getElementById('canvas');
+	var context = canvas.getContext('2d');
+
+
+	// number of days
+	var days = 1;
+
+	// number of hours
+	var hours = 16;
+
+	// one segment represents an hour so divide degrees by hours
+	var segment = 360 / hours;
+
+	// begin at 0 and end at one segment width
+	var startAngle = 0;
+	var endAngle = segment;
+	
+	var angle = 0
+	var circles = [];
+	var emotions = {{ emotions|safe }};
+	var question = "{{ question }}";
+
+	var canvas;
+    var canvasWidth;
+    var ctx;
+
+
+	function init(){
+        if (canvas.getContext) {
+          window.addEventListener('resize', resizeCanvas, false);
+          window.addEventListener('orientationchange', resizeCanvas, false);
+          resizeCanvas();
+          
+      }
+
+	    draw();
+	}
+
+	function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // center of big circle
+		var x1 = canvas.width / 2;
+		var y1 = canvas.height / 2.75;
+        redrawCanvas();
+        draw(x1, y1);
+        //addButton(x1, y1);
+      }
+
+    function redrawCanvas() {
+    	// Copy canvas as image data
+		  var imgData = context.getImageData(0,0, canvas.width, canvas.height);
+		 
+		  // Resize original canvas
+		  canvas.width = window.innerWidth;
+		  canvas.height = window.innerHeight;
+		 
+		  // Copy back to resized canvas
+		  context.putImageData(imgData, 0, 0);
+
+		  // Set up temporary canvas
+		  var tempCanvas = document.createElement('canvas');
+		  tempCanvas.width = canvas.width;
+		  tempCanvas.height = canvas.height;
+		  tmpCtx = tempCanvas.getContext('2d');
+		 
+		  // Copy to temporary canvas
+		  tmpCtx.drawImage(canvas, 0, 0);
+		  
+		  // Resize original canvas
+		  canvas.width = window.innerWidth;
+		  canvas.height = window.innerHeight;
+		 
+		  // Copy back to resized canvas
+		  context = canvas.getContext('2d');
+		  context.drawImage(tempCanvas, 0, 0, tempCanvas.width, tempCanvas.height, 0, 0, canvas.width, canvas.height);
+
+    }
+
+	function draw(x1, y1) {
+	          for (var i=1;i<=hours;i++)  {  
+	              drawCircles(i, x1, y1);
+				  //angle += segment;
+	          }
+			  // detect mouse click
+			  canvas.onclick = function(e) {
+			      // correct mouse coordinates:
+			      var rect = canvas.getBoundingClientRect(),
+			          x = e.clientX - rect.left,
+			          y = e.clientY - rect.top,
+			          i = 0, circle;
+    
+			      // check which circle:
+			      while(circle = circles[i++]) {
+			          context.beginPath();
+			          context.arc(circle.x, circle.y, circle.radius, 0, 2*Math.PI);
+			          if (context.isPointInPath(x, y)) {
+			              emotion_field=document.getElementById('emotion');
+						  intensity_field=document.getElementById('intensity');
+						  question_field = document.getElementById('question');
+						  emotion_field.value = circle.emotion;
+						  intensity_field.value = circle.intensity;
+						  question_field.value = question;
+						  form = document.getElementById('answer_form');
+						  form.submit();
+			              break;
+			          }
+			      }
+			  };
+	           
+	}
+	
+	Math.radians = function(degrees) {
+	  return degrees * Math.PI / 180;
+	};
+
+	//function addButton(x1,y1) {
+	//	$('#btn1').remove();
+	//	style_btn1 = 'position:absolute;background-color:lightgray;' + 'top:' + y1 +'px;left:' + x1 +'px;'
+
+	//	var $btn1 = $('<input/>').attr({
+	 //   type: 'button',
+	//    name: 'btn1',
+	//    value: 'None',
+	//    id: 'btn1',
+	//    style: style_btn1,
+	//    class: 'btn btn-md btn-default'
+	//});
+	//	$('body').append($btn1);
+
+	
+	//$(document).on("click", "#btn1", function() {
+	 //   alert('button clicked');
+	//});
+	//}
+	
+	function drawCircles(count, x1, y1) {
+		angle = segment*count;
+		for (var l=1;l<=5;l++) {
+			m = 75 * l; // radius from center of entire wheel
+			c = l * 10; //radius of each circle
+			var emotion=emotions[count-1]
+			if (l==5){
+				// for labels
+				var x = x1 + (m * (Math.cos(Math.radians(angle+11.25))));
+				var y = y1 + (m * (Math.sin(Math.radians(angle+11.25))));
+				context.beginPath();
+				context.fillStyle = "black";
+				context.font = '12pt Helvetica'
+				var emotion_label = emotion[0][0].toUpperCase() + emotion[0].substr(1)
+				context.fillText(emotion_label, x-15, y);
+				context.fill();
+				context.closePath();
+			} else {
+			if(l==1){
+				m += 30;
+				c += 7;
+			}
+			// x, y center of each circle
+			var x = x1 + (m * (Math.cos(Math.radians(angle+11.25))));
+			var y = y1 + (m * (Math.sin(Math.radians(angle+11.25))));
+		
+			context.beginPath();
+			context.fillStyle = emotion[1];
+			context.arc(x, y, c, 0, Math.PI * 2, false);
+			console.log(x, y);
+			context.fill();
+			context.closePath();
+			//context.fill();
+			// push circle info as objects:
+			circles.push({
+			     emotion: emotion[0],
+				 intensity: l,
+			     x: x,
+			     y: y,
+			     radius: c
+			 });
+			context.stroke();
+		}
+		}
+		
+	}
+
+
+	// start drawing our chart
+	init();
+</script> <!-- endof canvas script -->
+
+
+<script type='text/javascript'>
+$(document).ready(function() { 
+		var success = "{{ success }}";
+		if(success) {
+			$('.answer_message').append("<p style='color:green;margin-top:8px;font-weight:bold;'>" + success + "</p>")
+		}
+    
+}); 
+
+</script>
+
+
+ 
+ 
+{% endblock %}
+ 

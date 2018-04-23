@@ -1,0 +1,122 @@
+{% extends 'base/index.html' %}
+{% load helper_extras %}
+
+{% block page_head %} {{ title }} {% endblock %}
+
+{% block content %}
+  {{ block.super }}
+
+
+{% if not mode %}
+<div class='col-md-10'>
+    <form  class='form-horizontal' id='tag_form' class='form-inline' action='{% url "base:answer_list" %}'>
+    <div class='form-group'>
+      <div class='col-sm-6 col-md-1'>
+        <label for='keyword'>Tag filter </label>
+      </div>
+        <div class='col-sm-6 col-md-5'>
+        <select class='form-control' style='width:100%;' id='tag' name='tag' onChange="this.form.submit();">
+          <option value='all'>All</option>
+          {% for t in tags %}
+            <option {% if t == tag %}selected{% endif %} value='{{ t }}'>{{ t }}</option>
+          {% endfor %}
+        </select>
+        </div>
+
+        <div class='col-sm-6 col-md-1'>
+        <label for='date_from'>Date filter </label>
+      </div>
+        <div class='col-sm-6 col-md-2'>
+        <input class='datepicker form-control' id='date_from' name='date_from' {% if date_from %}value='{{ date_from }}'{% endif%} onChange="this.form.submit();"/>
+        </div>
+       
+       <div class='col-sm-6 col-md-1'>
+        <label for='date_from'>to </label>
+      </div>
+        <div class='col-sm-6 col-md-2'>
+        <input class='datepicker form-control' id='date_to' name='date_to' {% if date_to %}value='{{ date_to }}'{% endif%} onChange="this.form.submit();"/>
+        </div>
+
+        <input value='submit' type='submit' hidden/>
+        </div>
+     </form>
+</div>
+{% endif %}
+
+
+<div class='col-md-10'>
+<div class="panel panel-default">
+  <div class="panel-heading">Answers (Total Count: {{ count }})</div>
+  <div class='panel-body'>
+    <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              {% if not mode == 'question' %}
+              <th scope="col">Tag</th>
+              <th scope="col">Question</th>
+              {% endif %}
+              <th scope="col">User</th>
+              <th scope="col">Emotion</th>
+              <th scope="col">Intensity</th>
+              <th scope="col">Other</th>
+              <th scope="col">Datetime</th>
+             <!-- <th scope="col">Actions</th> -->
+            </tr>
+          </thead>
+          <tbody>
+          {% for answer in object_list %}
+            <tr>
+              <th scope="row">{{ forloop.counter0|add:object_list.start_index }} </th>
+              {% if not mode == 'question' %}
+              <td>{{ answer.question.tag }}</td>
+              <td>{{ answer.question.name }}</td>
+              {% endif %}
+              <td>{{ answer.created_by}}</td>
+              <td>{{ answer.get_emotion_display }}</td>
+              <td>{{ answer.intensity }}</td>
+              <td>{{ answer.note }}</td>
+              <td>{{ answer.date }}</td>
+             <!-- <td>
+                <button class='btn btn-default btn-sm'>delete</button>
+              </td> -->
+            </tr>
+          {% endfor %}
+            
+          </tbody>
+        </table>
+        {% include "base/include/paginate_with_parameters.html" %}
+    </div>
+    </div>
+</div>
+</div>
+
+{% if student %}
+<div class='col-md-12 back'>
+        <a type='button' href="{% url 'base:student_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+</div>
+{% else %}
+  {% if tag %}
+      <div class='col-md-12 back'>
+              <a type='button' href="{% url 'base:tag_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+      </div>
+  {% else %}
+      <div class='col-md-12 back'>
+              <a type='button' href="{% url 'base:question_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+      </div>
+  {% endif %}
+{% endif %}
+ {% endblock %}
+
+
+ {% block javascript %}
+    {{ block.super }}
+
+  <script type='text/javascript'>
+  $( function() {
+    $( ".datepicker" ).datepicker();
+  } );
+  </script>
+
+ {% endblock %}

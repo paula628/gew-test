@@ -1,0 +1,112 @@
+{% extends 'base/index.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block page_head %} {{ title }} {% endblock %}
+
+{% block content %}
+  {{ block.super }}
+
+
+
+  <div class='col-md-5'>
+    <form  class='form-horizontal' id='tag_form' class='form-inline' action='{% url "base:question_list" %}'>
+    <div class='form-group'>
+      <div class='col-sm-5 col-md-2'>
+        <label for='keyword'>Search by tag </label>
+      </div>
+        <div class='col-sm-7 col-md-9'>
+        <select class='form-control' style='width:100%;' id='tag' name='tag' onChange="this.form.submit();">
+        <option value='all'>All</option>
+        {% for t in tags %}
+          <option {% if t == tag %}selected{% endif %} value='{{ t }}'>{{ t }}</option>
+        {% endfor %}
+        </select>
+        </div>
+        <input value='submit' type='submit' hidden/>
+        </div>
+     </form>
+  </div>
+
+      
+    <div class='col-md-6'>
+        <form class='form-inline' id='tag_form' action='{% url "base:question_list" %}'>
+        <div class='form-group'>
+        <label class='control-label' for='keyword'>Search by keyword&nbsp; </label>
+       <input class='form-control' type='text' name='keyword' id='keyword' value='{% if keyword %}{{ keyword }}{% endif %}'/>
+        <input class='btn btn-sm btn-primary' type='submit' value='Submit'/>
+      </div>
+     </form>
+  </div>
+
+
+
+<div class='col-sm-12 col-md-11'>
+
+  <div class="panel panel-default">
+  <div class="panel-heading"> Questions
+  {% if tag %} 
+    tagged as <strong>{{ tag }}</strong> (Total count: {{ total_tag }})
+  {% else %}
+    {% if keyword %}
+      with keyword <strong>{{ keyword }}</strong> (Total count: {{ total_keyword }})
+    {% else %}
+      (Total count: {{ total }})
+    {% endif %}
+  {% endif %}
+  </div>
+  <div class='panel-body'>
+  <div class="table-responsive">
+<table class="table table-hover table-condensed">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Question</th>
+      <th scope="col">Code</th>
+      <th scope='col'>Tag</th>
+      <th scope='col'>Allow Anonymous</th>
+      <th scope='col'>Status</th>
+      <th scope='col'>Date Created</th>
+      <th scope='col'># of Answers</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for question in object_list %}
+    <tr>
+      <td scope="row">{{ forloop.counter }} </td>
+      <td class='highlight-column'>{{ question.name }}</td>
+      <td class='{% if question.code %}highlight-column{% endif %}'>{{ question.code|default:'-' }}</td>
+      <td>{{ question.tag }}</td>
+      <td>{% if question.allow_anonymous %}yes{% else %}no{% endif %}</td>
+      <td>{{ question.status }}</td>
+      <td>{{ question.date }}</td>
+      <td>{{ question.answer_count }}</td>
+      <td>
+        <a class='btn btn-primary btn-sm' href="{% url 'base:answer_graph' question.id %}" class='btn btn-primary btn-sm'>view graphs</a>
+        <a href="{% url 'base:answer_list_by_filter' mode='question' mode_id=question.id %}" class='btn btn-info btn-sm'>list answers</a>
+        <a href="{% url 'base:update_question' question.id %}" class='btn btn-default btn-sm'>view/edit</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% include "base/include/pagination.html" %}
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+ {% endblock %}
+
+
+ {% block javascript %}
+    {{ block.super }}
+  <script type='text/javascript'>
+      tag_form = $(tag_form)
+  </script>
+
+ {% endblock %}

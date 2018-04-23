@@ -1,0 +1,231 @@
+{% load static %}
+{% load helper_extras %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Geneva Emotion Wheel</title>
+
+    <!-- jQuery
+    <script src="{% static 'js/jquery.js' %}"></script> -->
+
+     <!-- Font Awesome Icons -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+   <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+
+    <!-- Custom CSS -->
+    <link href="{% static 'css/simple-sidebar.css' %}" rel="stylesheet">
+    <link href="{% static 'css/styles_extra.css' %}" rel="stylesheet">
+     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+     <!-- Chart JS -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+
+
+     <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  <script src="{% static 'js/jquery-ui.js' %}"></script>
+    
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    {% block extra_head %} {% endblock %}
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+            <li>
+                <a href="#menu-toggle" class="menu-toggle" id="menu-toggle"><i class="fas fa-angle-double-left"></i></a>
+            </li>
+
+                <li class="menuitem sidebar-brand">
+                    <a href="https://www.affective-sciences.org/gew/" target='new'>Geneva Emotion Wheel</a>
+                </li>
+
+                {% if temp_user|user_type:"t" %}
+                <li class='menuitem'>
+                    <a href="{% url 'base:dashboard' %}">Professor's Dashboard</a>
+                </li>
+
+                <li class='menuitem'>
+                <a href="#questionsSubmenu" data-toggle="collapse" aria-expanded="false">Questions</a>
+                <ul class="collapse list-unstyled" id="questionsSubmenu">
+                    <li>
+                        <a href="{% url 'base:create_question' %}">Create a Question</a>
+                        <a href="{% url 'base:question_list' %}">Question List</a>
+                        <a href="{% url 'base:tag_list' %}">Tag List</a>
+                    </li>
+                </ul>
+                </li>
+                
+
+                <li class='menuitem'>
+                <a href="#answersSubmenu" data-toggle="collapse" aria-expanded="false">Answers</a>
+                <ul class="collapse list-unstyled" id="answersSubmenu">
+                    <li>
+                        <a href="{% url 'base:answer_list' %}">Answer List</a>
+                    </li>
+                </ul>
+                </li>
+
+                 <li class='menuitem'>
+                <a href="#usersSubmenu" data-toggle="collapse" aria-expanded="false">Students</a>
+                <ul class="collapse list-unstyled" id="usersSubmenu">
+                    <li>
+                        <a href="{% url 'base:student_list' %}">Student List</a>
+                    </li>
+                </ul>
+                </li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'base:logout' %}"><i class="fas fa-sign-out-alt"></i>
+                        <p class='menuitem' style='display:inline'>&nbsp;Sign Out</p></a>
+                </li>
+                
+
+
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                         
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="page-head-line">{% block page_head %}{% endblock %}</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    {% if messages and temp_user %}
+                                        <ul class="messages ul-messages">
+                                            {% for message in messages %}
+                                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% block content %}
+                        {% endblock %}
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+
+
+<!-- delete modal -->
+
+<div id='delete-modal' class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+  <div class='col-md-9'>
+    <div class="modal-content">
+      <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Delete Confirmation</h5>
+      </div>
+      <form id='delete-form' name='delete-form' action='#' method='POST'>
+              <div class="modal-body">
+                
+                    {% csrf_token %}
+                    <label>Are you sure you want to delete this?</label>
+              </div>
+
+              <div class="modal-footer">
+                    <input type="submit" class="btn btn-default btn-md" data-dismiss="modal" aria-label='Close' value="Cancel"/>
+                    <button id='delete-confirm' type="submit" class="btn btn-danger btn-md">Delete</button>
+              </div>
+        </form> 
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
+        <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+{% block javascript %}
+<script type='text/javascript'>
+    jQuery(document).ready(function($) {
+    var alterClass = function() {
+    var ww = document.body.clientWidth;
+    if (ww < 768) {
+      $('#wrapper').toggleClass('toggled');
+       $('.menuitem').hide();
+    } else if (ww >= 768) {
+      $('#wrapper').removeClass('toggled');
+       $('.menuitem').show();
+    };
+  };
+  //$(window).resize(function(){
+   // alterClass();
+  //});
+  //Fire it when the page first loads:
+  alterClass();
+});
+</script>
+
+
+    <!-- Menu Toggle Script -->
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+       /* $(".menu-toggle").find("i").removeClass('fa-angle-double-left');*/
+       /*$('.menuitem').show();*/
+       if($('#wrapper').hasClass("toggled")){
+            $('.menuitem').hide();
+       } else {
+            $('.menuitem').show();
+       }
+
+
+    });
+
+    </script>
+
+    <!-- Delete Confirmation Button -->
+    <script>
+    $("#delete-confirm").click(function(e) {
+        var deleteForm = $('#delete-form')
+        var href = deleteForm.data('href');
+        deleteForm.submit();
+    });
+    </script>
+{% endblock %}
+
+</body>
+
+</html>
