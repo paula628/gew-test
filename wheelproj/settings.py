@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ["escpdigital.pythonanywhere.com", 'https://escpeurope.blackboar
 
 AUTHENTICATION_BACKENDS = [
   'django.contrib.auth.backends.ModelBackend',
-  'lti_provider.auth.LTIBackend',
+ # 'lti_provider.auth.LTIBackend',
 ]
 
 INSTALLED_APPS = [
@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -147,10 +147,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_HTTPONLY = True
 
-AUTHENTICATION_BACKENDS = [
-  'django.contrib.auth.backends.ModelBackend',
-  'lti_provider.auth.LTIBackend',
-]
+
 
 PYLTI_CONFIG = {
     'consumers': {

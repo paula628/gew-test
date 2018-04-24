@@ -23,7 +23,7 @@ from .forms import QuestionForm, AnswerForm, TempUserForm
 from django.views.generic.base import TemplateView
 #from lti_provider.mixins import LTIAuthMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.template.context_processors import csrf
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
@@ -66,6 +66,7 @@ class LTIAssignment2View(LTIAuthMixin, LoginRequiredMixin, TemplateView):
 
 def login(request):
     context = {}
+    context.update(csrf(request))
     if 'user' in request.session:
         request.session['user'] = ''
     if 'student' in request.session:
@@ -93,9 +94,9 @@ def login(request):
                     if student:
                         request.session['student'] = student.id
                         request.session.set_expiry(600)
-                        user = authenticate(request, username='mtanada', password='wpz2!tdf')
-                        if user is not None:
-                            login(request, user)
+                        #user = authenticate(request, username='mtanada', password='wpz2!tdf')
+                        #if user is not None:
+                        #    login(request, user)
                     else:
                         msg= "You can't be anonymous in that session."
                         messages.error(request, msg)
@@ -126,6 +127,7 @@ def create_user(request):
 
 def dashboard(request):
     context = {}
+    context.update(csrf(request))
     user = session_check(request)
     if not user:
         return redirect('base:login')
@@ -180,7 +182,7 @@ def answers_by_question_graph(request, question_id):
     question = get_object_or_None(Question, id=question_id)
     context = {'title' : 'Answers: {}'.format(question.name)}
     answers = Answer.objects.filter(question=question, is_active=True)
-    
+
     averages = []
     emotion_labels = []
     colors = []
@@ -344,7 +346,7 @@ def question_list(request):
         total_tag = questions.count()
         context.update({
                 'total_tag': total_tag,
-                'tag' : tag 
+                'tag' : tag
                     })
     elif keyword:
         questions = questions.filter(Q(name__icontains=keyword)|Q(code__icontains=keyword))
@@ -396,7 +398,7 @@ def answers_by_tag_graph(request, tag=False):
         answers = Answer.objects.filter(question__created_by=user,
                                         question__tag=tag,
                                         is_active=True)
-    
+
     averages = []
     emotion_labels = []
     colors = []
@@ -477,7 +479,7 @@ def answers_by_student_graph(request, student_id=None):
         context.update({'title' : 'Anonymous responses'})
         answers = Answer.objects.filter(question__created_by=user, created_by=None, is_active=True)
     context['student'] = student
-    
+
     averages = []
     emotion_labels = []
     colors = []
@@ -514,4 +516,3 @@ def paginate(page, object_list, count_per_page=10):
     return objects
 
 
-    
