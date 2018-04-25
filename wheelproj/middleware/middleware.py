@@ -13,6 +13,9 @@ from django.conf import settings
 from django.middleware.csrf import CsrfViewMiddleware, get_token
 from django.test import Client
 
+from base.models import TempUser
+from helpers.tools import get_object_or_None
+
 
 
 logger = logging.getLogger(__name__)
@@ -32,10 +35,6 @@ class LTIAuthMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        return self.get_response(request)
-
-    def process_request(self, request):
-        print request.POST, 'xxxx'
         logger.debug('inside process_request %s' % request.path)
         # AuthenticationMiddleware is required so that request.user exists.
         if not hasattr(request, 'user'):
@@ -46,21 +45,27 @@ class LTIAuthMiddleware(object):
                 " MIDDLEWARE_CLASSES setting to insert"
                 " 'django.contrib.auth.middleware.AuthenticationMiddleware'"
                 " before the PINAuthMiddleware class.")
-        else:
-            print 'user', request.user
-
-        if request.method == 'POST' and request.POST.get('lti_message_type') == 'basic-lti-launch-request':
-            user = auth.authenticate(request, username='escpdigital', password='escpdigital')
-            print user, 'USeeerRRR'
-            csrf_token = self.client.cookies['csrftoken'].value
-            print csrf_token, 'csrf'
+        message_type = request.POST.get('lti_message_type')
+        consumer_key = request.POST.get('oauth_consumer_key')
+        if request.method == 'POST' and message_type == 'basic-lti-launch-request' and consumer_key == 'escpdigital.pythonanywhere.com':
+            #user = auth.authenticate(request, username='escpdigital', password='escpdigital')
+            user_roles = request.POST.getlist('roles')
+            if 'Instructor' in user_roles:
+                user_type = 't'
+            else:
+                user_type = 's'
+            name = request.POST.get('lis_person_name_given')
+            user = get_object_or_None(TempUser, name=name, user_type=user_type)
 
             if user is not None:
                 # User is valid.  Set request.user and persist user in the session
                 # by logging the user in.
                 logger.debug('user was successfully authenticated; now log them in')
                 request.user = user
-                auth.login(request, user)
+                #auth.login(request, user)
+                request.session['user'] = user.id
+                if user_type == 's':
+                    request.session.set_expiry(1000)
                 lti_launch = {
                     'context_id': request.POST.get('context_id', None),
                     'context_label': request.POST.get('context_label', None),
@@ -102,7 +107,11 @@ class LTIAuthMiddleware(object):
                     'tool_consumer_instance_url': request.POST.get('tool_consumer_instance_url', None),
                     'user_id': request.POST.get('user_id', None),
                     'user_image': request.POST.get('user_image', None),
-                }
+                    }
+                    request.session['LTI_LAUNCH'] = lti_launch
+
             setattr(request, 'LTI', request.session.get('LTI_LAUNCH', {}))
-        else:
-            print 'NOTT'
+            if not request.LTI:
+                logger.warning("Could not find LTI launch parameters")
+
+        return self.get_response(request)
