@@ -7,6 +7,7 @@ from collections import OrderedDict
 from django.contrib import auth
 from django.core.exceptions import ImproperlyConfigured
 from django.conf import settings
+from django.http import HttpResponse
 
 #from timer import Timer
 
@@ -47,7 +48,7 @@ class LTIAuthMiddleware(object):
                 " before the PINAuthMiddleware class.")
         message_type = request.POST.get('lti_message_type')
         consumer_key = request.POST.get('oauth_consumer_key')
-        if request.method == 'POST' and message_type == 'basic-lti-launch-request' and consumer_key in settings.CONSUMER_KEYS::
+        if request.method == 'POST' and message_type == 'basic-lti-launch-request' and consumer_key in settings.CONSUMER_KEYS:
             #user = auth.authenticate(request, username='escpdigital', password='escpdigital')
             user_roles = request.POST.get('roles')
             if 'Instructor' in user_roles.split(','):
@@ -63,9 +64,11 @@ class LTIAuthMiddleware(object):
                 logger.debug('user was successfully authenticated; now log them in')
                 request.user = user
                 #auth.login(request, user)
-                request.session['user'] = user.id
-                if user_type == 's':
+                if user_type == 't':
                     request.session.set_expiry(1000)
+                    request.session['user'] = user.id
+                else:
+                    request.session['student'] = user.id
                 lti_launch = {
                     'context_id': request.POST.get('context_id', None),
                     'context_label': request.POST.get('context_label', None),
@@ -113,5 +116,7 @@ class LTIAuthMiddleware(object):
             setattr(request, 'LTI', request.session.get('LTI_LAUNCH', {}))
             if not request.LTI:
                 logger.warning("Could not find LTI launch parameters")
-
+        else:
+            return HttpResponse("Sorry, your request to enter has been denied.")
         return self.get_response(request)
+

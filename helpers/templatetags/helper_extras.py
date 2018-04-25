@@ -35,13 +35,25 @@ def is_teacher(user):
             res = True
     except:
         res=False
-    return res
-    
+    return res 
+
+def is_student(user):
+    res = False
+    try:
+        if user and user.user_type and user.user_type == 's':
+            res = True
+    except:
+        res=False
+    return res 
+
 
 @register.filter(name='user_type')
 def user_type(user, group):
     if user and group == 't':
         return is_teacher(user)
+    elif user and group == 's':
+        print user, type(user), 'studuser'
+        return is_student(user)
     else:
         return False
 
@@ -50,9 +62,7 @@ def relative_url(value, field_name, urlencode=None):
     url = '?{}={}'.format(field_name, value)
     if urlencode:
         querystring = urlencode.split('&')
-        print field_name, querystring
         filtered_querystring = filter(lambda p: p.split('=')[0] != field_name, querystring)
-        print filtered_querystring, 'fff'
         encoded_querystring = '&'.join(filtered_querystring)
         url = '{}&{}'.format(url, encoded_querystring)
     return url

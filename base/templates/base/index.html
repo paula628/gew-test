@@ -62,6 +62,7 @@
                     <a href="https://www.affective-sciences.org/gew/" target='new'>Geneva Emotion Wheel</a>
                 </li>
 
+
                 {% if temp_user|user_type:"t" %}
                 <li class='menuitem'>
                     <a href="{% url 'base:dashboard' %}">Professor's Dashboard</a>
@@ -97,10 +98,13 @@
                 </ul>
                 </li>
                 {% endif %}
+
+                {% if temp_user|user_type:"s" %}
                 <li>
                     <a href="{% url 'base:logout' %}"><i class="fas fa-sign-out-alt"></i>
                         <p class='menuitem' style='display:inline'>&nbsp;Sign Out</p></a>
                 </li>
+                {% endif %}
                 
 
 

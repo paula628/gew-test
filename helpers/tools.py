@@ -30,5 +30,6 @@ def student_session_check(request, question):
 		if question.allow_anonymous:
 			res = True
 		elif not question.allow_anonymous:
-			res = request.session.get('student', None)
+			student_id = request.session.get('student', None)
+			res = get_object_or_None(TempUser, id=student_id)
 	return res
