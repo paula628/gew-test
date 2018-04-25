@@ -47,10 +47,10 @@ class LTIAuthMiddleware(object):
                 " before the PINAuthMiddleware class.")
         message_type = request.POST.get('lti_message_type')
         consumer_key = request.POST.get('oauth_consumer_key')
-        if request.method == 'POST' and message_type == 'basic-lti-launch-request' and consumer_key == 'escpdigital.pythonanywhere.com':
+        if request.method == 'POST' and message_type == 'basic-lti-launch-request' and consumer_key in settings.CONSUMER_KEYS::
             #user = auth.authenticate(request, username='escpdigital', password='escpdigital')
-            user_roles = request.POST.getlist('roles')
-            if 'Instructor' in user_roles:
+            user_roles = request.POST.get('roles')
+            if 'Instructor' in user_roles.split(','):
                 user_type = 't'
             else:
                 user_type = 's'
@@ -108,7 +108,7 @@ class LTIAuthMiddleware(object):
                     'user_id': request.POST.get('user_id', None),
                     'user_image': request.POST.get('user_image', None),
                     }
-                    request.session['LTI_LAUNCH'] = lti_launch
+                request.session['LTI_LAUNCH'] = lti_launch
 
             setattr(request, 'LTI', request.session.get('LTI_LAUNCH', {}))
             if not request.LTI:

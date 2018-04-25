@@ -157,6 +157,7 @@ PYLTI_CONFIG = {
     }
 }
 
+CONSUMER_KEYS = ['escpdigital.pythonanywhere.com']
 
 LTI_TOOL_CONFIGURATION = {
     'title': 'Sample LTI Tool',
