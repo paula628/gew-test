@@ -48,7 +48,11 @@ class LTIAuthMiddleware(object):
                 " before the PINAuthMiddleware class.")
         message_type = request.POST.get('lti_message_type')
         consumer_key = request.POST.get('oauth_consumer_key')
-        if request.method == 'POST' and message_type == 'basic-lti-launch-request' and consumer_key in settings.CONSUMER_KEYS:
+        lti_version = request.POST.get("lti_version")
+        roles = request.POST.get("roles")
+        if (request.method == 'POST' and lti_version and roles and 
+            message_type == 'basic-lti-launch-request' and
+            consumer_key in settings.CONSUMER_KEYS):
             #user = auth.authenticate(request, username='escpdigital', password='escpdigital')
             user_roles = request.POST.get('roles')
             if 'Instructor' in user_roles.split(','):
@@ -117,6 +121,7 @@ class LTIAuthMiddleware(object):
             if not request.LTI:
                 logger.warning("Could not find LTI launch parameters")
         else:
-            return HttpResponse("Sorry, your request to enter has been denied.")
+            if 'LTI_LAUNCH' not in request.session:
+                return HttpResponse("Sorry, your request to enter has been denied.")
         return self.get_response(request)
 
