@@ -24,6 +24,7 @@ from django.views.generic.base import TemplateView
 #from lti_provider.mixins import LTIAuthMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template.context_processors import csrf
+from django.views.decorators.csrf import csrf_protect
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
@@ -63,7 +64,7 @@ class LTIAssignment2View(LTIAuthMixin, LoginRequiredMixin, TemplateView):
 
 """
 
-
+@csrf_protect
 def login(request):
     context = {}
     context.update(csrf(request))
@@ -113,6 +114,7 @@ def logout(request):
     request.session['student'] = ''
     return redirect('base:login')
 
+@csrf_protect
 def create_user(request):
     context = {}
     form = TempUserForm(request.POST)
@@ -136,6 +138,7 @@ def dashboard(request):
     context['latest_questions'] = user.latest_questions()
     return render(request, 'base/dashboard.html', context)
 
+@csrf_protect
 def answer_page(request, question):
     context = {}
     student = student_session_check(request, question)
@@ -276,6 +279,7 @@ def tag_list(request):
 
 
 ## Question
+@csrf_protect
 def create_question(request):
     context = {}
     context['title'] = 'Create a Question'
@@ -291,6 +295,8 @@ def create_question(request):
             return redirect('base:question_list')
     return render(request, 'base/question_form.html', context)
 
+
+@csrf_protect
 def update_question(request, question_id):
     context = {}
     context['title'] = 'Update a Question'
@@ -312,6 +318,7 @@ def update_question(request, question_id):
             return redirect('base:question_list')
     return render(request, 'base/question_form.html', context)
 
+@csrf_protect
 def delete_question(request, question_id):
     context = {}
     user = session_check(request)
