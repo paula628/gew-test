@@ -162,6 +162,20 @@ class Answer(BaseModel):
         return u'{0} | {1}'.format(self.get_emotion_display(), self.intensity)
 
 
+class Consumer(models.Model):
+    key = models.CharField(max_length=42)
+    secret = models.CharField(max_length=42)
 
 
 
+"""
+ <QueryDict: {u'lti_version': [u'LTI-1p0'], u'context_id': [u'play_mtanada'], u'tool_consumer_info_version': [u'3100.0.6-rel'], u'tool_consumer_instance_guid': [u'escpdigital.pythonanywhere.com'], 
+ u'oauth_signature': [u'WZv2Wa7u3jxwiB+DEb/JzvCR6YM='], u'context_label': [u'play_mtanada'], u'lti_message_type': [u'basic-lti-launch-request'], u'lis_person_name_full': [u'Paula Tanada'], 
+ u'context_title': [u'mtanada playground'], u'tool_consumer_instance_description': [u'ESCP Europe Business School'], u'oauth_consumer_key': [u'escpdigital.pythonanywhere.com'], u'oauth_timestamp': [u'1524562698'],
+ u'launch_presentation_locale': [u'fr_FR'], u'resource_link_description': [u''], u'tool_consumer_instance_contact_email': [u'gwj@escpeurope.eu'],
+ u'tool_consumer_info_product_family_code': [u'learn'], u'oauth_callback': [u'about:blank'], u'lis_person_name_family': [u'Tanada'], u'oauth_nonce': [u'9685443837559988'], u'lis_course_offering_sourcedi
+
+"""
+
+
+    
