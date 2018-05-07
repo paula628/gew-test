@@ -20,7 +20,6 @@ from helpers.tools import get_object_or_None
 from lti.contrib.django import DjangoToolProvider
 
 from .middleware_helper import SignatureValidator
-from requests_oauthlib import OAuth1Session
 
 
 
@@ -45,27 +44,6 @@ class LTIAuthMiddleware(object):
 
          # create the tool provider instance
         request_is_valid = True
-        request_key = request.POST.get('oauth_consumer_key', None)
-        timestamp = request.POST.get('oauth_timestamp', None)
-        nonce = request.POST.get('oauth_nonce', None)
-
-        tool_provider = DjangoToolProvider.from_django_request(request=request)
-
-        validator = SignatureValidator(tool_provider)
-
-        check_key = validator.check_client_key(request_key)
-        if not check_key:
-            logger.error("Invalid request: key check failed.")
-            raise PermissionDenied
-        check_req = validator.verify(request)
-        if not check_req:
-            logger.error("Invalid request: signature check failed.")
-            raise PermissionDenied
-
-        check_timestamp = validator.validate_timestamp_and_nonce(request_key, timestamp, nonce, request)
-        if not check_timestamp:
-            logger.error("Invalid request: timestamp check failed")
-
 
         # AuthenticationMiddleware is required so that request.user exists.
         if not hasattr(request, 'user'):
@@ -146,12 +124,11 @@ class LTIAuthMiddleware(object):
                     'user_image': request.POST.get('user_image', None),
                     }
                 request.session['LTI_LAUNCH'] = lti_launch
-
-            setattr(request, 'LTI', request.session.get('LTI_LAUNCH', {}))
+                setattr(request, 'LTI', request.session.get('LTI_LAUNCH', {}))
             if not request.LTI:
                 logger.warning("Could not find LTI launch parameters")
-        else:
-            if 'LTI_LAUNCH' not in request.session:
-                return HttpResponse("Sorry, your request to enter has been denied.")
+        
+        if 'LTI_LAUNCH' not in request.session:
+            return HttpResponse("Sorry, your request to enter has been denied.")
         return self.get_response(request)
 

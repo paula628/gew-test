@@ -26,52 +26,42 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template.context_processors import csrf
 from django.views.decorators.csrf import csrf_protect
 
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from lti.contrib.django import DjangoToolProvider
+from wheelproj.middleware.middleware_helper import SignatureValidator
 
 
-"""
-class IndexView(TemplateView):
-    template_name = 'base/index2.html'
 
-    def post(self, request):
-        return render(request, self.template_name)
-
-
-class LTIAssignment1View(LTIAuthMixin, LoginRequiredMixin, TemplateView):
-
-    template_name = 'base/assignment.html'
-
-    def get_context_data(self, **kwargs):
-        return {
-            'is_student': self.lti.lis_result_sourcedid(self.request),
-            'course_title': self.lti.course_title(self.request),
-            'number': 1
-        }
-
-
-class LTIAssignment2View(LTIAuthMixin, LoginRequiredMixin, TemplateView):
-
-    template_name = 'base/assignment.html'
-
-    def get_context_data(self, **kwargs):
-        return {
-            'is_student': self.lti.lis_result_sourcedid(self.request),
-            'course_title': self.lti.course_title(self.request),
-            'number': 2
-        }
-
-
-"""
 
 @csrf_protect
 def login(request):
+
+    request_key = request.POST.get('oauth_consumer_key', None)
+    timestamp = request.POST.get('oauth_timestamp', None)
+    nonce = request.POST.get('oauth_nonce', None)
+
+    tool_provider = DjangoToolProvider.from_django_request(request=request)
+    validator = SignatureValidator(tool_provider)
+
+    check_key = validator.check_client_key(request_key)
+    if not check_key:
+        logger.error("Invalid request: key check failed.")
+        raise PermissionDenied
+    check_req = validator.verify(request)
+    if not check_req:
+        logger.error("Invalid request: signature check failed.")
+        raise PermissionDenied
+
+    check_timestamp = validator.validate_timestamp_and_nonce(request_key, timestamp, nonce, request)
+    if not check_timestamp:
+        logger.error("Invalid request: timestamp check failed")
+
+
     context = {}
     context.update(csrf(request))
-    if 'user' in request.session:
-        request.session['user'] = ''
-    if 'student' in request.session:
-        request.session['student'] = ''
+    #if 'user' in request.session:
+     #   request.session['user'] = ''
+    #if 'student' in request.session:
+    #    request.session['student'] = ''
     students = TempUser.objects.filter(user_type='s', is_active=True)
     context['students'] = students
     context['create_user_form'] = TempUserForm()
@@ -107,7 +97,11 @@ def login(request):
             else:
                 msg = "Error! Either the session does not exist or it is already closed."
                 messages.error(request, msg)
-    return render(request, 'base/login_form.html', context)
+    if 'user' in request.session:
+        return redirect('base:dashboard')
+    else:
+
+        return render(request, 'base/login_form.html', context)
 
 def logout(request):
     request.session['user'] = ''
