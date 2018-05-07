@@ -5,7 +5,7 @@ import json
 from collections import OrderedDict
 
 from django.contrib import auth
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.conf import settings
 from django.http import HttpResponse
 
@@ -14,8 +14,13 @@ from django.http import HttpResponse
 from django.middleware.csrf import CsrfViewMiddleware, get_token
 from django.test import Client
 
-from base.models import TempUser
+from base.models import TempUser, Consumer
 from helpers.tools import get_object_or_None
+
+from lti.contrib.django import DjangoToolProvider
+
+from .middleware_helper import SignatureValidator
+from requests_oauthlib import OAuth1Session
 
 
 
@@ -37,6 +42,31 @@ class LTIAuthMiddleware(object):
 
     def __call__(self, request):
         logger.debug('inside process_request %s' % request.path)
+
+         # create the tool provider instance
+        request_is_valid = True
+        request_key = request.POST.get('oauth_consumer_key', None)
+        timestamp = request.POST.get('oauth_timestamp', None)
+        nonce = request.POST.get('oauth_nonce', None)
+
+        tool_provider = DjangoToolProvider.from_django_request(request=request)
+
+        validator = SignatureValidator(tool_provider)
+
+        check_key = validator.check_client_key(request_key)
+        if not check_key:
+            logger.error("Invalid request: key check failed.")
+            raise PermissionDenied
+        check_req = validator.verify(request)
+        if not check_req:
+            logger.error("Invalid request: signature check failed.")
+            raise PermissionDenied
+
+        check_timestamp = validator.validate_timestamp_and_nonce(request_key, timestamp, nonce, request)
+        if not check_timestamp:
+            logger.error("Invalid request: timestamp check failed")
+
+
         # AuthenticationMiddleware is required so that request.user exists.
         if not hasattr(request, 'user'):
             logger.debug('improperly configured: requeset has no user attr')
@@ -50,7 +80,7 @@ class LTIAuthMiddleware(object):
         consumer_key = request.POST.get('oauth_consumer_key')
         lti_version = request.POST.get("lti_version")
         roles = request.POST.get("roles")
-        if (request.method == 'POST' and lti_version and roles and 
+        if (request.method == 'POST' and lti_version and roles and
             message_type == 'basic-lti-launch-request' and
             consumer_key in settings.CONSUMER_KEYS):
             #user = auth.authenticate(request, username='escpdigital', password='escpdigital')
