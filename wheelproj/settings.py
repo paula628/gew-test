@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '@g_g5ek(mk1%kd1s754-7u#$k0i5&jekl-iqo-^*lx)2d-k9@j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["escpdigital.pythonanywhere.com", 'https://escpeurope.blackboard.com/', "localhost"]
 

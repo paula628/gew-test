@@ -58,10 +58,10 @@ class LTIAuthMiddleware(object):
         consumer_key = request.POST.get('oauth_consumer_key')
         lti_version = request.POST.get("lti_version")
         roles = request.POST.get("roles")
+        consumer_db = get_object_or_None(Consumer, key=consumer_key)
         if (request.method == 'POST' and lti_version and roles and
             message_type == 'basic-lti-launch-request' and
-            consumer_key in settings.CONSUMER_KEYS):
-            #user = auth.authenticate(request, username='escpdigital', password='escpdigital')
+            consumer_key == consumer_db.key):
             user_roles = request.POST.get('roles')
             if 'Instructor' in user_roles.split(','):
                 user_type = 't'
@@ -70,7 +70,7 @@ class LTIAuthMiddleware(object):
             name = request.POST.get('lis_person_name_given')
             user = get_object_or_None(TempUser, name=name, user_type=user_type)
 
-            if user is not None:
+            if user:
                 # User is valid.  Set request.user and persist user in the session
                 # by logging the user in.
                 logger.debug('user was successfully authenticated; now log them in')
@@ -81,6 +81,7 @@ class LTIAuthMiddleware(object):
                     request.session['user'] = user.id
                 else:
                     request.session['student'] = user.id
+                    request.session.set_expiry(600)
                 lti_launch = {
                     'context_id': request.POST.get('context_id', None),
                     'context_label': request.POST.get('context_label', None),
@@ -125,9 +126,9 @@ class LTIAuthMiddleware(object):
                     }
                 request.session['LTI_LAUNCH'] = lti_launch
                 setattr(request, 'LTI', request.session.get('LTI_LAUNCH', {}))
-            if not request.LTI:
+            if not hasattr(request, 'LTI'):
                 logger.warning("Could not find LTI launch parameters")
-        
+
         if 'LTI_LAUNCH' not in request.session:
             return HttpResponse("Sorry, your request to enter has been denied.")
         return self.get_response(request)

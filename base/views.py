@@ -32,9 +32,9 @@ from wheelproj.middleware.middleware_helper import SignatureValidator
 
 
 
-@csrf_protect
-def login(request):
 
+def login(request):
+    context = {}
     request_key = request.POST.get('oauth_consumer_key', None)
     timestamp = request.POST.get('oauth_timestamp', None)
     nonce = request.POST.get('oauth_nonce', None)
@@ -55,13 +55,9 @@ def login(request):
     if not check_timestamp:
         logger.error("Invalid request: timestamp check failed")
 
-
-    context = {}
     context.update(csrf(request))
-    #if 'user' in request.session:
-     #   request.session['user'] = ''
-    #if 'student' in request.session:
-    #    request.session['student'] = ''
+    if 'student' in request.session:
+        request.session['student'] = ''
     students = TempUser.objects.filter(user_type='s', is_active=True)
     context['students'] = students
     context['create_user_form'] = TempUserForm()
@@ -97,10 +93,10 @@ def login(request):
             else:
                 msg = "Error! Either the session does not exist or it is already closed."
                 messages.error(request, msg)
-    if 'user' in request.session:
+
+    if 'user' in request.session and request.session['user']:
         return redirect('base:dashboard')
     else:
-
         return render(request, 'base/login_form.html', context)
 
 def logout(request):
