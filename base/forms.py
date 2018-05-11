@@ -3,10 +3,10 @@ from django import forms
 from .models import Answer, Question, TempUser
 
 class QuestionForm(forms.ModelForm):
-    
+
     class Meta:
         model = Question
-        fields = ('name', 'tag', 'allow_anonymous', 'status', 'created_by')
+        fields = ('name', 'tag', 'allow_anonymous', 'status', 'submission', 'created_by')
         widgets = {
             'created_by': forms.HiddenInput()
         }
@@ -16,6 +16,7 @@ class QuestionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(QuestionForm, self).__init__(*args, **kwargs)
         self.fields['name'].label = "Question"
+        self.fields['submission'].label = "No. of submissions"
         self.fields['allow_anonymous'].required = False
 
 
@@ -45,12 +46,12 @@ class AnswerForm(forms.ModelForm):
             answer = Answer.objects.filter(
                                         created_by__id=student,
                                         question__id=question.id,
-                                        question__allow_anonymous=False, 
+                                        question__allow_anonymous=False,
                                         is_active=True)
-            if answer.exists():
+            if answer.exists() and question.submission == 'single':
                 raise forms.ValidationError('You have already answered this question')
         return cleaned_data
-        
+
 
 
     def save(self, commit=True, *args, **kwargs):
@@ -76,5 +77,5 @@ class TempUserForm(forms.ModelForm):
         fields = ['name', 'user_type']
         fields_required = ['name', 'user_type']
 
-    
+
 
