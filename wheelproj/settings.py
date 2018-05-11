@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '@g_g5ek(mk1%kd1s754-7u#$k0i5&jekl-iqo-^*lx)2d-k9@j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["escpdigital.pythonanywhere.com", 'https://escpeurope.blackboard.com/', "localhost"]
 
@@ -116,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
 
@@ -149,32 +149,5 @@ SESSION_COOKIE_HTTPONLY = True
 
 
 
-PYLTI_CONFIG = {
-    'consumers': {
-        'escpdigital.pythonanywhere.com': {
-            'secret': 'secret'
-        }
-    }
-}
 
-CONSUMER_KEYS = ['escpdigital.pythonanywhere.com']
-
-LTI_TOOL_CONFIGURATION = {
-    'title': 'Sample LTI Tool',
-    'description': 'This tool includes launch, navigation and assignments',
-    'launch_url': 'lti/',
-    'embed_url': '',  # @todo - add an editor embed example
-    'embed_icon_url': '',
-    'embed_tool_id': '',
-    'landing_url': '/',
-    'navigation': True,
-    'new_tab': True,
-    'course_aware': False,
-    'frame_width': 1024,
-    'frame_height': 1024,
-    'assignments': {
-        '1': '/assignment/1/',
-        '2': '/assignment/2/',
-    }
-}
 
