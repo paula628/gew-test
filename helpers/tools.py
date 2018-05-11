@@ -1,4 +1,3 @@
-import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
 from base.models import TempUser, Question

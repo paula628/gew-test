@@ -21,7 +21,6 @@ from .models import Emotion, Answer, TempUser, Question
 from .forms import QuestionForm, AnswerForm, TempUserForm
 
 from django.views.generic.base import TemplateView
-#from lti_provider.mixins import LTIAuthMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template.context_processors import csrf
 from django.views.decorators.csrf import csrf_protect
@@ -194,7 +193,6 @@ def answers_by_question_graph(request, question_id):
         else:
             intensity_average = 0
         if k != 'none' and k != 'other':
-            print k, v
             averages.append(intensity_average)
             colors.append(v)
             emotion_colors.append(k)

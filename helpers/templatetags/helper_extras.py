@@ -35,7 +35,7 @@ def is_teacher(user):
             res = True
     except:
         res=False
-    return res 
+    return res
 
 def is_student(user):
     res = False
@@ -44,7 +44,7 @@ def is_student(user):
             res = True
     except:
         res=False
-    return res 
+    return res
 
 
 @register.filter(name='user_type')
@@ -52,7 +52,6 @@ def user_type(user, group):
     if user and group == 't':
         return is_teacher(user)
     elif user and group == 's':
-        print user, type(user), 'studuser'
         return is_student(user)
     else:
         return False

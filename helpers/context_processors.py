@@ -1,5 +1,5 @@
 from base.models import TempUser
-from .tools import session_check, student_session_check
+from .tools import session_check
 from .tools import get_object_or_None
 
 def user_processor(request):
