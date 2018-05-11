@@ -21,7 +21,7 @@
             pointer-events:none;
             }
 
-    
+
 
 
     .quadrant > .circle > p {
@@ -60,7 +60,7 @@
             }
 
 
-        
+
     }
 
     @media(min-width:1551px){
@@ -102,11 +102,11 @@
                 width: 100%;
             }
             .quadrant > .circle { position: absolute;}
-            .quadrant > .circle:nth-of-type(2) { 
+            .quadrant > .circle:nth-of-type(2) {
                 transform: rotate(22.5deg);}
-            .quadrant > .circle:nth-of-type(3) { 
+            .quadrant > .circle:nth-of-type(3) {
                 transform: rotate(45deg);}
-            .quadrant > .circle:nth-of-type(4) { 
+            .quadrant > .circle:nth-of-type(4) {
                 transform: rotate(67.5deg);}
 
 
@@ -149,7 +149,7 @@
     .two {opacity: 0.75;}
     .one {opacity: 0.6;}
 
-    
+
 
 
     </style>
@@ -207,7 +207,7 @@
                 </div>
             </div>
 
-            
+
 
             <!-- Second quadrant. -->
 
@@ -232,7 +232,7 @@
                 </div>
             </div>
 
-            
+
 
             <!-- Third quadrant. -->
 
@@ -283,7 +283,7 @@
 
             </div>
 
-       
+
 
             <!-- First inner circle -->
 
@@ -308,7 +308,7 @@
                     </div>
                 </div>
 
-                
+
 
                 <!-- Second quadrant. -->
 
@@ -329,7 +329,7 @@
                     </div>
                 </div>
 
-                
+
 
                 <!-- Third quadrant. -->
 
@@ -350,7 +350,7 @@
                     </div>
                 </div>
 
-                
+
 
                 <!-- Fourth quadrant. -->
 
@@ -371,7 +371,7 @@
                     </div>
                 </div>
 
-                
+
 
                 <!-- Second inner circle -->
 
@@ -396,7 +396,7 @@
                         </div>
                     </div>
 
-                    
+
                     <!-- Second quadrant. -->
 
                     <div class="quadrant">
@@ -414,7 +414,7 @@
                         </div>
                     </div>
 
-                    
+
                     <!-- Third quadrant. -->
                     <div class="quadrant">
                         <div class="circle">
@@ -448,7 +448,7 @@
                         </div>
                     </div>
 
-                    
+
 
                     <!-- Second inner circle -->
 
@@ -470,7 +470,7 @@
                             </div>
                         </div>
 
-                        
+
 
                         <!-- Second quadrant. -->
 
@@ -490,7 +490,7 @@
 
                         </div>
 
-                        
+
 
                         <!-- Third quadrant. -->
                         <div class="quadrant">
@@ -507,7 +507,7 @@
                                 <div class="circle guilt trigger" id='guilt-1'></div>
                             </div>
                         </div>
-                        
+
 
                         <!-- Fourth quadrant. -->
 
@@ -543,7 +543,7 @@
 
     <div class='col-md-offset-3 col-md-6' id='id_answer_form' align='center'>
         <form id='answer_form' method='POST' action="{% url 'base:answer_page' question.id %}" class='form-inline'>
-            {% csrf_token %} 
+            {% csrf_token %}
             <p id='selection'></p>
             <div class='col-md-12' id='other_selected'>
                 <p>Please describe the other emotion.  <input type='text' maxlength="50" name='other_text' style="width:100%;" class='form-control'/></p>
@@ -575,11 +575,11 @@ function moveElements() {
     container2.append(center_buttons);
   } else {
     instruction_container.append(center_buttons);
-  } 
+  }
 }
 
 $(document).ready(function() {
-moveElements();   
+moveElements();
 $(window).resize(function() {
     moveElements();
 });
@@ -588,7 +588,7 @@ $(window).resize(function() {
 </script>
 
 <script type='text/javascript'>
-$(document).ready(function() { 
+$(document).ready(function() {
     var elements = document.getElementsByClassName("label");
     for (var i=0; i < elements.length; i++) {
         boundingRect = elements[i].getBoundingClientRect();
@@ -598,7 +598,7 @@ $(document).ready(function() {
         var yCenter = boundingRect.y + radius;
 
     }
-}); 
+});
 
 </script>
 
@@ -618,10 +618,10 @@ function checkPointerLocation(event) {
         } else {
             var radius_small = radius
         }
-       
+
         var xCenter = boundingRect.x + radius;
         var yCenter = boundingRect.y + radius;
-        
+
         /*var xC = (radius * (Math.cos(Math.radians(11.5)))) + (boundingRect.x + radius)
         var yC = (radius * (Math.sin(Math.radians(11.5)))) + (boundingRect.y + radius)*/
 
@@ -634,7 +634,7 @@ function checkPointerLocation(event) {
             var location = 'in';
             return location;
         }
-        
+
     }
     return location;
 
@@ -649,7 +649,7 @@ document.body.addEventListener("mousemove", function(event) {
             document.body.style.cursor = 'default';
         }
     }, 20);
-    
+
 });
 
 
@@ -675,7 +675,7 @@ function printMousePos(event) {
         } else {
             var radius_small = radius
         }
-        
+
         var xCenter = boundingRect.x + radius;
         var yCenter = boundingRect.y + radius;
 
@@ -717,7 +717,7 @@ document.addEventListener("click", printMousePos);
         var otherText = $('#other_text')
         $("#selection").html('<strong>Other</strong>: ' + otherText);
 
-        
+
     });
 
     $("#other-form").submit(function(event) {
@@ -727,7 +727,7 @@ document.addEventListener("click", printMousePos);
 
 
 <script type='text/javascript'>
-$(document).ready(function() { 
+$(document).ready(function() {
     $('#other_selected').hide();
     /* functiionality for None and Other buttons */
     $('#id_none').click(function() {
@@ -747,7 +747,7 @@ $(document).ready(function() {
         $("#selection").html('<strong>Other</strong>');
         $('#other_selected').show();
     });
-}); 
+});
 
 </script>
 
