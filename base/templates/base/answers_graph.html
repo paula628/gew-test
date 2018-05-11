@@ -32,7 +32,7 @@
 </div>
 <script>
 var ctx = document.getElementById("myChart").getContext('2d');
-var labels = {{ emotion_labels|safe }};
+var labels = {{ emotion_colors|safe }};
 var averages = {{ averages|safe }};
 var colors = {{ colors|safe }};
 
@@ -41,7 +41,6 @@ var myChart = new Chart(ctx, {
     data: {
         labels: labels,
         datasets: [{
-            label: '# of Votes',
             data: averages,
             backgroundColor: colors,
             borderColor: colors,
@@ -62,7 +61,7 @@ var myChart = new Chart(ctx, {
 
 <script>
 var ctx = document.getElementById("myChart2").getContext('2d');
-var labels = {{ emotion_labels|safe }};
+var labels = {{ emotion_all|safe }};
 var votes = {{ count|safe }};
 
 var myChart = new Chart(ctx, {

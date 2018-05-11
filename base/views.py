@@ -35,73 +35,71 @@ from wheelproj.middleware.middleware_helper import SignatureValidator
 
 def login(request):
     context = {}
-    request_key = request.POST.get('oauth_consumer_key', None)
-    timestamp = request.POST.get('oauth_timestamp', None)
-    nonce = request.POST.get('oauth_nonce', None)
+    student = ''
+    teacher = ''
 
-    tool_provider = DjangoToolProvider.from_django_request(request=request)
-    validator = SignatureValidator(tool_provider)
-
-    check_key = validator.check_client_key(request_key)
-    if not check_key:
-        logger.error("Invalid request: key check failed.")
-        raise PermissionDenied
-    check_req = validator.verify(request)
-    if not check_req:
-        logger.error("Invalid request: signature check failed.")
-        raise PermissionDenied
-
-    check_timestamp = validator.validate_timestamp_and_nonce(request_key, timestamp, nonce, request)
-    if not check_timestamp:
-        logger.error("Invalid request: timestamp check failed")
-
-    context.update(csrf(request))
-    if 'student' in request.session:
-        request.session['student'] = ''
-    students = TempUser.objects.filter(user_type='s', is_active=True)
-    context['students'] = students
-    context['create_user_form'] = TempUserForm()
+    request.session['user'] = False
+    request.session['student'] = False
+    user = request.user
+    user_type = user.user_type
+    #context['create_user_form'] = TempUserForm()
     if request.method == 'POST':
-        name = request.POST.get('user', None)
+        request_key = request.POST.get('oauth_consumer_key', None)
+        timestamp = request.POST.get('oauth_timestamp', None)
+        nonce = request.POST.get('oauth_nonce', None)
+
+        tool_provider = DjangoToolProvider.from_django_request(request=request)
+        validator = SignatureValidator(tool_provider)
+        check_key = validator.check_client_key(request_key)
+        if not check_key:
+            logger.error("Invalid request: key check failed.")
+            raise PermissionDenied
+        check_req = validator.verify(request)
+        if not check_req:
+            logger.error("Invalid request: signature check failed.")
+            raise PermissionDenied
+        check_timestamp = validator.validate_timestamp_and_nonce(request_key, timestamp, nonce, request)
+        if not check_timestamp:
+            logger.error("Invalid request: timestamp check failed")
+
         code = request.POST.get('code', None)
-        if name:
-            login = get_object_or_None(TempUser, name=name, user_type='t')
-            if login:
-                request.session['user'] = login.id
-                request.session.set_expiry(6000)
-                return redirect('base:dashboard')
-        elif code:
+        if user_type == 't':
+            request.session['user'] = user.id
+            request.session.set_expiry(1000)
+            return redirect('base:dashboard')
+        else:
+            request.session['student'] = user.id
+            request.session.set_expiry(600)
+            return render(request, 'base/login_form.html', context)
+    else:
+        return render(request, 'base/login_form.html', context)
+
+def login_student(request):
+    context = {}
+    code = request.POST.get('code')
+    if request.method == 'POST':
+        if code:
             questions = Question.objects.filter(code=code, status='open', is_active=True)
             if questions and questions.count() ==1:
                 question = questions[0]
                 context.update({'question':question})
                 if not question.allow_anonymous:
-                    student_id = request.POST.get('student', None)
-                    student = get_object_or_None(TempUser, id=student_id, user_type='s')
-                    if student:
-                        request.session['student'] = student.id
-                        request.session.set_expiry(600)
-                        #user = authenticate(request, username='mtanada', password='wpz2!tdf')
-                        #if user is not None:
-                        #    login(request, user)
-                    else:
+                    student = request.POST.get('student', None)
+                    if not student or student == '0':
                         msg= "You can't be anonymous in that session."
                         messages.error(request, msg)
+                        context.update({'student':student})
                         return render(request, 'base/login_form.html', context)
                 url = reverse('base:answer_page', args=[question.id])
                 return redirect(url)
             else:
                 msg = "Error! Either the session does not exist or it is already closed."
                 messages.error(request, msg)
-
-    if 'user' in request.session and request.session['user']:
-        return redirect('base:dashboard')
-    else:
-        return render(request, 'base/login_form.html', context)
+        return redirect('base:answer_page', question=question)
 
 def logout(request):
-    request.session['user'] = ''
-    request.session['student'] = ''
+    #request.session['user'] = ''
+    #request.session['student'] = ''
     return redirect('base:login')
 
 @csrf_protect
@@ -143,6 +141,7 @@ def answer_page(request, question):
     if request.method == 'POST':
         valid = False
         form = AnswerForm(request.POST)
+        student = request.POST.get('student', None)
         if not question.allow_anonymous:
             if student:
                 form = AnswerForm(request.POST, student=student)
@@ -157,9 +156,12 @@ def answer_page(request, question):
             if form.is_valid():
                 instance = form.save(commit=False)
                 other_text = request.POST.get('other_text', None)
+                if not question.allow_anonymous:
+                    student_obj = get_object_or_None(TempUser, id=student)
+                    instance.created_by = student_obj
                 if other_text:
                     instance.note = other_text
-                form.save()
+                instance.save()
                 msg = 'Your answer has been recorded'
                 context.update({'message': msg })
 
@@ -178,6 +180,7 @@ def answers_by_question_graph(request, question_id):
 
     averages = []
     emotion_labels = []
+    emotion_colors = []
     colors = []
     response_count = []
     for k, v in Emotion.EMOTION_COLORS:
@@ -188,14 +191,18 @@ def answers_by_question_graph(request, question_id):
             intensity_average = sum(intensity_list)/ len(intensity_list)
         else:
             intensity_average = 0
-        averages.append(intensity_average)
+        if k != 'none' and k != 'other':
+            print k, v
+            averages.append(intensity_average)
+            colors.append(v)
+            emotion_colors.append(k)
         emotion_labels.append(k)
-        colors.append(v)
     context.update({'total_count' : answers.count()})
     context.update({
                 'count': json.dumps(response_count),
                 'averages': json.dumps(averages),
-                'emotion_labels' : json.dumps(emotion_labels),
+                'emotion_all' : json.dumps(emotion_labels),
+                'emotion_colors' : json.dumps(emotion_colors),
                 'colors': json.dumps(colors),
                 })
     return render(request, 'base/answers_graph.html', context)

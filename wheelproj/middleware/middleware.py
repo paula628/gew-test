@@ -1,25 +1,11 @@
 
 import logging
-import json
 
-from collections import OrderedDict
-
-from django.contrib import auth
-from django.core.exceptions import ImproperlyConfigured, PermissionDenied
-from django.conf import settings
 from django.http import HttpResponse
-
-#from timer import Timer
-
-from django.middleware.csrf import CsrfViewMiddleware, get_token
-from django.test import Client
+from django.urls import reverse
 
 from base.models import TempUser, Consumer
 from helpers.tools import get_object_or_None
-
-from lti.contrib.django import DjangoToolProvider
-
-from .middleware_helper import SignatureValidator
 
 
 
@@ -68,20 +54,20 @@ class LTIAuthMiddleware(object):
             else:
                 user_type = 's'
             name = request.POST.get('lis_person_name_given')
-            user = get_object_or_None(TempUser, name=name, user_type=user_type)
-
+            family_name = request.POST.get('lis_person_name_family')
+            email = request.POST.get('tool_consumer_instance_contact_email')
+            user, created = TempUser.objects.get_or_create(
+                                                            name=name,
+                                                            family_name=family_name,
+                                                            email=email,
+                                                            user_type=user_type
+                                                            )
             if user:
                 # User is valid.  Set request.user and persist user in the session
                 # by logging the user in.
                 logger.debug('user was successfully authenticated; now log them in')
                 request.user = user
-                #auth.login(request, user)
-                if user_type == 't':
-                    request.session.set_expiry(1000)
-                    request.session['user'] = user.id
-                else:
-                    request.session['student'] = user.id
-                    request.session.set_expiry(600)
+
                 lti_launch = {
                     'context_id': request.POST.get('context_id', None),
                     'context_label': request.POST.get('context_label', None),
@@ -129,7 +115,7 @@ class LTIAuthMiddleware(object):
             if not hasattr(request, 'LTI'):
                 logger.warning("Could not find LTI launch parameters")
 
-        if 'LTI_LAUNCH' not in request.session:
+        if not request.path.startswith(reverse('admin:index')) and 'LTI_LAUNCH' not in request.session:
             return HttpResponse("Sorry, your request to enter has been denied.")
         return self.get_response(request)
 

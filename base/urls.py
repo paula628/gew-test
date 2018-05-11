@@ -7,6 +7,7 @@ from . import views
 
 urlpatterns = [
 	url(r'^login/$',views.login, name='login'),
+	url(r'^login_student/$',views.login_student, name='login_student'),
 	url(r'^logout/$', views.logout, name='logout'),
     url(r'^create-user/$', views.create_user, name='create_user'),
 
@@ -32,9 +33,6 @@ urlpatterns = [
     url(r'^student-responses/graphs/(?P<student_id>\w+)/$', views.answers_by_student_graph, name='answers_by_student_graph'),
 
 
-    #url(r'^$', views.IndexView.as_view()),
     url(r'^admin/', include(admin.site.urls)),
-    #url(r'^lti/', include('lti_provider.urls')),
-    #url(r'^assignment/1/', views.LTIAssignment1View.as_view()),
-    #url(r'^assignment/2/', views.LTIAssignment2View.as_view()),
+
 ]
