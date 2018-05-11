@@ -96,6 +96,8 @@ def login_student(request):
                 msg = "Error! Either the session does not exist or it is already closed."
                 messages.error(request, msg)
         return redirect('base:answer_page', question=question)
+    else:
+        return render(request, 'base/login_form.html', context)
 
 def logout(request):
     #request.session['user'] = ''
