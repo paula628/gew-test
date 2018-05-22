@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import datetime
 import random
 import string
 
 from django.db import models
 from django.utils import timezone
+from django.db.models import Count
 
 
 
@@ -50,6 +50,10 @@ class TempUser(models.Model):
         students = Answer.objects.filter(question__created_by__id=self.id,
                                         is_active=True).values_list('created_by__id').distinct()
         return students.count()
+
+    @property
+    def tags(self):
+        return self.all_questions().values('tag').annotate(tag_count=Count('tag')).order_by('tag')
 
 
 class BaseModel(models.Model):
@@ -157,6 +161,11 @@ class Question(BaseModel):
     @property
     def response_count(self):
         total = self.answer_set.filter(is_active=True)
+        return total.count()
+
+    @property
+    def anonymous_response_count(self):
+        total = self.answer_set.filter(is_active=True, created_by__isnull=True)
         return total.count()
 
 

@@ -125,6 +125,7 @@ def dashboard(request):
     context['temp_user'] = user
     context['title'] = "Hello, {}!".format(user.name)
     context['latest_questions'] = user.latest_questions()
+    context['tags'] = user.tags
     return render(request, 'base/dashboard.html', context)
 
 @csrf_protect
@@ -232,11 +233,11 @@ def answer_list(request, *args, **kwargs):
     date_from = request.GET.get('date_from', None)
     date_to = request.GET.get('date_to', None)
     if date_from:
-        start_date = datetime.datetime.strptime(date_from, "%m/%d/%Y")
+        start_date = datetime.datetime.strptime(date_from + " 00:00", "%m/%d/%Y %H:%M")
         answers = answers.filter(date__gte=start_date)
         context['date_from'] = date_from
     if date_to:
-        end_date = datetime.datetime.strptime(date_to, "%m/%d/%Y")
+        end_date = datetime.datetime.strptime(date_to + " 23:59", "%m/%d/%Y %H:%M")
         answers = answers.filter(date__lte=end_date)
         context['date_to'] = date_to
 
@@ -361,7 +362,8 @@ def question_list(request):
                     })
 
     for q in questions:
-        q.answer_count = q.answer_set.filter(is_active=True).count()
+        q.answer_count = q.response_count
+        q.anonymous_count = q.anonymous_response_count
 
     page_objects = paginate(page, questions)
     context.update({'object_list': page_objects,
@@ -405,6 +407,7 @@ def answers_by_tag_graph(request, tag=False):
 
     averages = []
     emotion_labels = []
+    emotion_colors = []
     colors = []
     response_count = []
     for k, v in Emotion.EMOTION_COLORS:
@@ -415,17 +418,22 @@ def answers_by_tag_graph(request, tag=False):
             intensity_average = sum(intensity_list)/ len(intensity_list)
         else:
             intensity_average = 0
-        averages.append(intensity_average)
+        if k != 'none' and k != 'other':
+            averages.append(intensity_average)
+            colors.append(v)
+            emotion_colors.append(k)
         emotion_labels.append(k)
-        colors.append(v)
     context.update({'total_count' : answers.count()})
     context.update({
                 'count': json.dumps(response_count),
                 'averages': json.dumps(averages),
-                'emotion_labels' : json.dumps(emotion_labels),
+                'emotion_all' : json.dumps(emotion_labels),
+                'emotion_colors' : json.dumps(emotion_colors),
                 'colors': json.dumps(colors),
                 })
     return render(request, 'base/answers_graph.html', context)
+
+
 
 ## Students
 def answers_by_student(request, student_id):
@@ -486,6 +494,7 @@ def answers_by_student_graph(request, student_id=None):
 
     averages = []
     emotion_labels = []
+    emotion_colors = []
     colors = []
     response_count = []
     for k, v in Emotion.EMOTION_COLORS:
@@ -496,14 +505,17 @@ def answers_by_student_graph(request, student_id=None):
             intensity_average = sum(intensity_list)/ len(intensity_list)
         else:
             intensity_average = 0
-        averages.append(intensity_average)
+        if k != 'none' and k != 'other':
+            averages.append(intensity_average)
+            colors.append(v)
+            emotion_colors.append(k)
         emotion_labels.append(k)
-        colors.append(v)
     context.update({'total_count' : answers.count()})
     context.update({
                 'count': json.dumps(response_count),
                 'averages': json.dumps(averages),
-                'emotion_labels' : json.dumps(emotion_labels),
+                'emotion_all' : json.dumps(emotion_labels),
+                'emotion_colors' : json.dumps(emotion_colors),
                 'colors': json.dumps(colors),
                 })
     return render(request, 'base/answers_graph.html', context)

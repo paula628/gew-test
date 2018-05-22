@@ -28,7 +28,7 @@
      </form>
   </div>
 
-      
+
     <div class='col-md-6'>
         <form class='form-inline' id='tag_form' action='{% url "base:question_list" %}'>
         <div class='form-group'>
@@ -41,11 +41,11 @@
 
 
 
-<div class='col-sm-12 col-md-11'>
+<div class='col-sm-12 col-md-12'>
 
   <div class="panel panel-default">
   <div class="panel-heading"> Questions
-  {% if tag %} 
+  {% if tag %}
     tagged as <strong>{{ tag }}</strong> (Total count: {{ total_tag }})
   {% else %}
     {% if keyword %}
@@ -68,6 +68,7 @@
       <th scope='col'>Status</th>
       <th scope='col'>Date Created</th>
       <th scope='col'># of Answers</th>
+      <th scope='col'># of Anonymous Answers</th>
       <th scope="col">Actions</th>
     </tr>
   </thead>
@@ -82,6 +83,7 @@
       <td>{{ question.status }}</td>
       <td>{{ question.date }}</td>
       <td>{{ question.answer_count }}</td>
+      <td>{{ question.anonymous_count }}</td>
       <td>
         <a class='btn btn-primary btn-sm' href="{% url 'base:answer_graph' question.id %}" class='btn btn-primary btn-sm'>view graphs</a>
         <a href="{% url 'base:answer_list_by_filter' mode='question' mode_id=question.id %}" class='btn btn-info btn-sm'>list answers</a>
