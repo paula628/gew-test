@@ -3,9 +3,25 @@
 
 {% block page_head %} {{ title }} {% endblock %}
 
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% if student %}
+        <li><a type='button' href="{% url 'base:student_list' %}">Student List</a></li>
+        <li class="current">{{ student.name }}'s Answers</li>
+
+    {% else %}
+          {% if tag %}
+                <li><a type='button' href="{% url 'base:tag_list' %}">Tag List</a></li>
+                <li class="current">Answers tagged {{ tag }}</li>
+          {% else %}
+                {% if question %}<li><a type='button' href="{% url 'base:question_list' %}">Questions List</a></li>{% endif %}
+                <li class="current">Answers {% if question %}to {{ question }} {% endif %}</li>
+          {% endif %}
+    {% endif %}
+{% endblock %}
+
 {% block content %}
   {{ block.super }}
-
 
 {% if not mode %}
 <div class='col-md-10'>
@@ -29,7 +45,7 @@
         <div class='col-sm-6 col-md-2'>
         <input class='datepicker form-control' id='date_from' name='date_from' {% if date_from %}value='{{ date_from }}'{% endif%} onChange="this.form.submit();"/>
         </div>
-       
+
        <div class='col-sm-6 col-md-1'>
         <label for='date_from'>to </label>
       </div>
@@ -83,7 +99,7 @@
               </td> -->
             </tr>
           {% endfor %}
-            
+
           </tbody>
         </table>
         {% include "base/include/paginate_with_parameters.html" %}
@@ -92,21 +108,6 @@
 </div>
 </div>
 
-{% if student %}
-<div class='col-md-12 back'>
-        <a type='button' href="{% url 'base:student_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-</div>
-{% else %}
-  {% if tag %}
-      <div class='col-md-12 back'>
-              <a type='button' href="{% url 'base:tag_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-      </div>
-  {% else %}
-      <div class='col-md-12 back'>
-              <a type='button' href="{% url 'base:question_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-      </div>
-  {% endif %}
-{% endif %}
  {% endblock %}
 
 

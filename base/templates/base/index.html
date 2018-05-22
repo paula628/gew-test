@@ -117,7 +117,13 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-
+                        {% if temp_user|user_type:"t" %}
+                            <ol class="breadcrumb">
+                                {% block breadcrumbs %}
+                                    <li><a type='button' href="{% url 'base:dashboard' %}">Dashboard</a></li>
+                                {% endblock %}
+                            </ol>
+                        {% endif %}
                             <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="page-head-line">{% block page_head %}{% endblock %}</h4>

@@ -2,6 +2,11 @@
 
 {% block page_head %} {{ title }} {% endblock %}
 
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li class="current">Student List</li>
+{% endblock %}
+
 {% block content %}
   {{ block.super }}
 
@@ -39,7 +44,7 @@
         </tr>
       {% endfor %}
 
-        
+
       </tbody>
     </table>
     {% include "base/include/pagination.html" %}

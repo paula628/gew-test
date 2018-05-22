@@ -2,6 +2,11 @@
 
 {% block page_head %} {{ title }} {% endblock %}
 
+{% block breadcrumbs %}
+    {{ block.super }}
+        <li class='current'>Tag List</li>
+{% endblock %}
+
 {% block content %}
   {{ block.super }}
 
@@ -34,7 +39,7 @@
         </tr>
       {% endfor %}
 
-        
+
       </tbody>
     </table>
     </div>

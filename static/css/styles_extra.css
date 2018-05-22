@@ -167,3 +167,17 @@ a[aria-expanded="true"]::before {
     background-color: #1CA347;
     border-color: #1CA347;
 }
+
+
+
+.breadcrumb li {
+    display: inline;
+}
+.breadcrumb li+li:before {
+    content:"> ";
+}
+
+.breadcrumb li.current {
+    color: #F0677C;
+}
+}

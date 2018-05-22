@@ -2,6 +2,10 @@
 
 {% block page_head %} {{ title }} {% endblock %}
 
+{% block breadcrumbs %}
+    <li class="current">Dashboard</li>
+{% endblock %}
+
 {% block content %}
   {{ block.super }}
 <div class="content-wrapper">

@@ -4,6 +4,23 @@
 
 {% block page_head %} {{ title }} {% endblock %}
 
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% if student %}
+        <li><a type='button' href="{% url 'base:student_list' %}">Student List</a></li>
+        <li class='current'>{{ student }}'s Graphs</li>
+    {% else %}
+        {% if tag %}
+        <li><a type='button' href="{% url 'base:tag_list' %}">Tag List</a></li>
+        <li class='current'>Tag Graphs</li>
+        {% else %}
+        <li><a type='button' href="{% url 'base:question_list' %}">Question List</a></li>
+        <li class='current'>Question Graphs</li>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
 {% block content %}
   {{ block.super }}
 <div class='row'>
@@ -17,19 +34,7 @@
     </div>
 </div>
 
-<div class='row'>
-     <div class='col-md-12 back'>
-    {% if student %}
-        <a type='button' href="{% url 'base:student_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-    {% else %}
-        {% if tag %}
-        <a type='button' href="{% url 'base:tag_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-        {% else %}
-        <a type='button' href="{% url 'base:question_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
-        {% endif %}
-    {% endif %}
-    </div>
-</div>
+
 <script>
 var ctx = document.getElementById("myChart").getContext('2d');
 var labels = {{ emotion_colors|safe }};

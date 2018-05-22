@@ -4,10 +4,13 @@
 
 {% block page_head %} {{ title }} {% endblock %}
 
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li class="current">Question List</li>
+{% endblock %}
+
 {% block content %}
   {{ block.super }}
-
-
 
   <div class='col-md-5'>
     <form  class='form-horizontal' id='tag_form' class='form-inline' action='{% url "base:question_list" %}'>

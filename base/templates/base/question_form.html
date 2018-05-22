@@ -4,6 +4,12 @@
 {% block page_head %} {{ title }} {% endblock %}
 {% block message %} {{ title }} {% endblock %}
 
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li class="current">
+        {% if question %}Update {% else %}Create {% endif %} Question</li>
+{% endblock %}
+
 {% block content %}
   {{ block.super }}
 
@@ -37,7 +43,7 @@
       </div>
     </div>
 </div>
-<a type='button' href="{% url 'base:question_list' %}" class='btn btn-default btn-md'><i class="fas fa-arrow-left"></i>&nbsp;Back</a>
+
 {% if question %}
   <button class='btn btn-default pull-right' id='delete-question' data-href='{% url "base:delete_question" question.id %}'>Delete</button>
 {% endif %}
@@ -58,7 +64,7 @@
   </script>
 
   <script type='text/javascript'>
-$(document).ready(function() { 
+$(document).ready(function() {
   var user = '{{ temp_user.id }}';
   $('#id_created_by').val(user);
 
