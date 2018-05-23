@@ -25,7 +25,10 @@ SECRET_KEY = '@g_g5ek(mk1%kd1s754-7u#$k0i5&jekl-iqo-^*lx)2d-k9@j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["escpdigital.pythonanywhere.com", 'https://escpeurope.blackboard.com/', "localhost"]
+ALLOWED_HOSTS = [
+            "escpdigital.pythonanywhere.com",
+            'https://escpeurope.blackboard.com/',
+            "localhost"]
 
 
 # Application definition

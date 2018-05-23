@@ -164,7 +164,7 @@ def answer_page(request, question):
                 if other_text:
                     instance.note = other_text
                 instance.save()
-                msg = 'Your answer has been recorded'
+                msg = 'Thank you! Your answer has been recorded.'
                 context.update({'message': msg })
 
         context['form'] = form
