@@ -13,12 +13,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.urls import reverse
 from django.core.exceptions import ValidationError
-
-from helpers.tools import get_object_or_None
-from helpers.tools import session_check, student_session_check
-
-from .models import Emotion, Answer, TempUser, Question
-from .forms import QuestionForm, AnswerForm, TempUserForm
+from django.utils.timezone import make_aware
 
 from django.views.generic.base import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -27,6 +22,11 @@ from django.views.decorators.csrf import csrf_protect
 
 from lti.contrib.django import DjangoToolProvider
 from wheelproj.middleware.middleware_helper import SignatureValidator
+from helpers.tools import get_object_or_None
+from helpers.tools import session_check, student_session_check
+
+from .models import Emotion, Answer, TempUser, Question
+from .forms import QuestionForm, AnswerForm, TempUserForm
 
 
 
@@ -233,11 +233,13 @@ def answer_list(request, *args, **kwargs):
     date_from = request.GET.get('date_from', None)
     date_to = request.GET.get('date_to', None)
     if date_from:
-        start_date = datetime.datetime.strptime(date_from + " 00:00", "%m/%d/%Y %H:%M")
+        datefrom = date_from + " 00:00"
+        start_date = make_aware(datetime.datetime.strptime(datefrom, '%d-%m-%Y %H:%M'))
         answers = answers.filter(date__gte=start_date)
         context['date_from'] = date_from
     if date_to:
-        end_date = datetime.datetime.strptime(date_to + " 23:59", "%m/%d/%Y %H:%M")
+        dateto = date_to + " 23:59"
+        end_date = make_aware(datetime.datetime.strptime(dateto, '%d-%m-%Y %H:%M'))
         answers = answers.filter(date__lte=end_date)
         context['date_to'] = date_to
 
