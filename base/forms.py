@@ -4,6 +4,8 @@ from .models import Answer, Question, TempUser
 
 class QuestionForm(forms.ModelForm):
 
+    tag = forms.CharField(widget=forms.TextInput(attrs={'pattern':'[A-Za-z]+', 'title':'Enter alphanumeric characters only. '}))
+
     class Meta:
         model = Question
         fields = ('name', 'tag', 'allow_anonymous', 'status', 'submission', 'created_by')
