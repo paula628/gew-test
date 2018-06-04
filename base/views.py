@@ -64,7 +64,7 @@ def login(request):
         code = request.POST.get('code', None)
         if user_type == 't':
             request.session['user'] = user.id
-            request.session.set_expiry(1000)
+            request.session.set_expiry(3000)
             return redirect('base:dashboard')
         else:
             request.session['student'] = user.id
@@ -78,6 +78,7 @@ def login_student(request):
     code = request.POST.get('code')
     if request.method == 'POST':
         if code:
+            code = code.strip()
             questions = Question.objects.filter(code=code, status='open', is_active=True)
             if questions and questions.count() ==1:
                 question = questions[0]
@@ -172,6 +173,18 @@ def answer_page(request, question):
 
 
 ## Answers
+def frequency_graph(request, question_id):
+    context = {}
+    user = session_check(request)
+    if not user:
+        return redirect('base:login')
+    question = get_object_or_None(Question, id=question_id)
+    answers = Answer.objects.filter(question=question, is_active=True)
+
+    context['emotions'] = Emotion.EMOTION_COLORS
+
+    return render(request, 'base/answer_page_old.html', context)
+
 def answers_by_question_graph(request, question_id):
     user = session_check(request)
     if not user:
@@ -185,6 +198,7 @@ def answers_by_question_graph(request, question_id):
     emotion_colors = []
     colors = []
     response_count = []
+    frequency = []
     for k, v in Emotion.EMOTION_COLORS:
         answers_per_emotion = answers.filter(emotion=k)
         intensity_list = answers_per_emotion.values_list('intensity', flat=True)
@@ -193,6 +207,11 @@ def answers_by_question_graph(request, question_id):
             intensity_average = sum(intensity_list)/ len(intensity_list)
         else:
             intensity_average = 0
+        f = []
+        for n in range(1,5):
+            frequency_intensity = answers_per_emotion.filter(intensity=n)
+            f.append(frequency_intensity.count())
+        frequency.append(f)
         if k != 'none' and k != 'other':
             averages.append(intensity_average)
             colors.append(v)
@@ -205,6 +224,9 @@ def answers_by_question_graph(request, question_id):
                 'emotion_all' : json.dumps(emotion_labels),
                 'emotion_colors' : json.dumps(emotion_colors),
                 'colors': json.dumps(colors),
+                'question':question,
+                'emotions': json.dumps(Emotion.EMOTION_COLORS),
+                'frequency': json.dumps(frequency),
                 })
     return render(request, 'base/answers_graph.html', context)
 
