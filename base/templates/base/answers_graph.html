@@ -24,9 +24,9 @@
 {% block content %}
   {{ block.super }}
 
-    <div class='col-md-6' id='canvas-div' >
+    <div class='col-md-6' id='canvas-div' style='overflow-y:visible;' >
         <h4>Frequency</h4>
-        <canvas id="canvas" width="200" height="250" style="overflow-y:visible;"></canvas>
+        <canvas id="canvas" class='canvas'></canvas>
     </div>
     <div class='col-md-4'>
         <h4>Intensity Per Emotion (Average)</h4>
@@ -80,12 +80,13 @@
 	}
 
 	function resizeCanvas() {
-	    width = $(canvas).parent().width();
-        canvas.width = window.innerWidth;
+        canvas.style.width='110%';
+        canvas.style.height='110%';
         canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
 
         // center of big circle
-		var x1 = canvas.width / 2;
+		var x1 = canvas.width / 2.5;
 		var y1 = canvas.height / 2;
         redrawCanvas();
         draw(x1, y1);
@@ -122,13 +123,12 @@
     }
 
 	function draw(x1, y1) {
-
 	        if (x1 <= 550) {
 		      var rw = 90;
 		      var re = 10;
 		    } else {
-		      var rw = 125;
-		      var re = 15;
+		      var rw = 120;
+		      var re = 14;
 		    }
 	          for (var i=1;i<=hours;i++)  {
 	              drawCircles(i, x1, y1, rw, re);
@@ -185,7 +185,7 @@
 				var y = y1 + (m * (Math.sin(Math.radians(angle+11.25))));
 				context.beginPath();
 				context.fillStyle = "black";
-				context.font = '14pt Helvetica'
+				context.font = '16pt Helvetica'
 				var emotion_label = emotion[0][0].toUpperCase() + emotion[0].substr(1)
 				context.fillText(emotion_label, x-15, y);
 				context.fill();
