@@ -10,7 +10,7 @@
   {{ block.super }}
 <div class="content-wrapper">
             <div class="row">
-                 <div class="col-md-4 col-sm-4 col-xs-6">
+                 <div class="col-md-5 col-sm-5 col-xs-6">
                     <div class="dashboard-div-wrapper bk-clr-one">
                         <h3>{{ temp_user.total_open_questions }}</h3>
                         <hr/>
@@ -21,7 +21,7 @@
                     </div>
                 </div>
 
-                 <div class="col-md-4 col-sm-4 col-xs-6">
+                 <div class="col-md-5 col-sm-5 col-xs-6">
                     <div class="dashboard-div-wrapper bk-clr-two">
                         <h3>{{ temp_user.total_students }}</h3>
                         <hr/>
@@ -31,7 +31,7 @@
 
 
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-10">
                       <div class='panel panel-info'>
                     <div class="panel-heading">
                         Latest Questions
@@ -56,7 +56,8 @@
                                             <td>{{ q.response_count }}</td>
                                             <td>{{ q.anonymous_response_count }}</td>
                                             <td><a href="{% url 'base:update_question' q.id %}" class='btn btn-default btn-xs'>view/edit</a>
-                                            <a href="{% url 'base:answer_list_by_filter' mode='question' mode_id=q.id %}"  class="btn btn-xs btn-info" >list answers</a></td>
+                                            <a href="{% url 'base:answer_graph' q.id %}" class='btn btn-primary btn-xs'>view graphs</a>
+                                            <a href="{% url 'base:answer_list_by_filter' mode='question' mode_id=q.id %}"  class="btn btn-xs btn-info">view answers</a></td>
                                         </tr>
                                       {% endfor %}
                                     </tbody>
@@ -66,7 +67,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-8">
+                <div class="col-md-10">
                      <div class="Compose-Message">
                 <div class="panel panel-success">
                     <div class="panel-heading">

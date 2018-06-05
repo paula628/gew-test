@@ -89,7 +89,7 @@
       <td>{{ question.anonymous_count }}</td>
       <td>
         <a class='btn btn-primary btn-sm' href="{% url 'base:answer_graph' question.id %}" class='btn btn-primary btn-sm'>view graphs</a>
-        <a href="{% url 'base:answer_list_by_filter' mode='question' mode_id=question.id %}" class='btn btn-info btn-sm'>list answers</a>
+        <a href="{% url 'base:answer_list_by_filter' mode='question' mode_id=question.id %}" class='btn btn-info btn-sm'>view answers</a>
         <a href="{% url 'base:update_question' question.id %}" class='btn btn-default btn-sm'>view/edit</a>
       </td>
     </tr>
