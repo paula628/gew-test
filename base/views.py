@@ -542,7 +542,7 @@ def answers_by_student_graph(request, student_id=None):
                 'emotion_colors' : json.dumps(emotion_colors),
                 'colors': json.dumps(colors),
                 })
-    return render(request, 'base/answers_graph.html', context)
+    return render(request, 'base/answers_graph_by_student.html', context)
 
 
 def paginate(page, object_list, count_per_page=10):
