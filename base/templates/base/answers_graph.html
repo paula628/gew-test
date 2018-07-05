@@ -331,14 +331,3 @@ var myChart = new Chart(ctx, {
 </script>
 
 {% endblock %}
-
-{% block javascript %}
-  <script type='text/javascript'>
-  $('#show-frequency').on('click', function(){
-    var href = $(this).data('href');
-    $('#frequency-modal').modal('show');
-
-  })
-  </script>
-
-{% endblock %}
