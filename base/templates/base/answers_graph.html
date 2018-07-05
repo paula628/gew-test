@@ -7,13 +7,13 @@
 {% block extra_head %}
     {{ block.super }}
 <style>
-@media screen and (min-width: 1090px) {
+@media screen and (min-width: 1080px) {
   #canvas-div {
     height: 720px;
   }
 }
 
-@media screen and (max-width: 1089px) {
+@media screen and (max-width: 1079px) {
   #canvas-div {
     height: 600px;
   }
@@ -142,11 +142,11 @@
 
 	function draw(x1, y1) {
 	    console.log(x1);
-	        if (x1 <= 320) {
+	        if (x1 <= 330) {
 		      var rw = 50; //radius of entire wheel
 		      var re = 5.5; // radius of each circle
 	        }
-		    else if (x1 > 320 && x1 <= 400) {
+		    else if (x1 > 330 && x1 <= 410) {
 		      var rw = 65;
 		      var re = 7.5;
 
