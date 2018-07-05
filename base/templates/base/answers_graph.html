@@ -7,15 +7,15 @@
 {% block extra_head %}
     {{ block.super }}
 <style>
-@media screen and (min-width: 1080px) {
+@media screen and (min-width: 1090px) {
   #canvas-div {
-    height: 800px;
+    height: 720px;
   }
 }
 
-@media screen and (max-width: 1079px) {
+@media screen and (max-width: 1089px) {
   #canvas-div {
-    height: 650px;
+    height: 600px;
   }
 }
 </style>
@@ -40,12 +40,12 @@
 {% block content %}
   {{ block.super }}
 
-    <div class='col-lg-7 col-md-11 col-sm-12' id='canvas-div'>
+    <div class='col-lg-8 col-md-11 col-sm-12' id='canvas-div'>
         <h4>Frequency</h4>
         <canvas id="canvas" class='canvas'></canvas>
     </div>
 
-    <div class='col-lg-7 col-md-11 col-sm-12'>
+    <div class='col-lg-8 col-md-11 col-sm-12'>
         <br/>
         <h4>Intensity Per Emotion (Average)</h4>
         <canvas id="myChart" width="150" height="150"></canvas>
@@ -141,11 +141,12 @@
     }
 
 	function draw(x1, y1) {
-	        if (x1 <= 249) {
-		      var rw = 55; //radius of entire wheel
-		      var re = 6; // radius of each circle
+	    console.log(x1);
+	        if (x1 <= 320) {
+		      var rw = 50; //radius of entire wheel
+		      var re = 5.5; // radius of each circle
 	        }
-		    else if (x1 > 250 && x1 <= 400) {
+		    else if (x1 > 320 && x1 <= 400) {
 		      var rw = 65;
 		      var re = 7.5;
 
