@@ -4,6 +4,22 @@
 
 {% block page_head %} {{ title }} {% endblock %}
 
+{% block extra_head %}
+    {{ block.super }}
+<style>
+@media screen and (min-width: 1080px) {
+  #canvas-div {
+    height: 800px;
+  }
+}
+
+@media screen and (max-width: 1079px) {
+  #canvas-div {
+    height: 650px;
+  }
+}
+</style>
+{% endblock %}
 
 {% block breadcrumbs %}
     {{ block.super }}
@@ -24,14 +40,16 @@
 {% block content %}
   {{ block.super }}
 
-    <div class='col-md-6' id='canvas-div' style='overflow-y:visible;' >
+    <div class='col-lg-7 col-md-11 col-sm-12' id='canvas-div'>
         <h4>Frequency</h4>
         <canvas id="canvas" class='canvas'></canvas>
     </div>
-    <div class='col-md-4'>
+
+    <div class='col-lg-7 col-md-11 col-sm-12'>
+        <br/>
         <h4>Intensity Per Emotion (Average)</h4>
         <canvas id="myChart" width="150" height="150"></canvas>
-
+        <br/>
         <h4>Number of Responses Per Emotion </h4>
         <canvas id="myChart2" width="150" height="150"></canvas>
     </div>
@@ -80,14 +98,14 @@
 	}
 
 	function resizeCanvas() {
-        canvas.style.width='110%';
-        canvas.style.height='110%';
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
+        canvas.style.width=$("#canvas-div").height();
+        canvas.style.height=$("#canvas-div").width();
+        canvas.height = $("#canvas-div").height();
+        canvas.width = $("#canvas-div").width();
 
         // center of big circle
-		var x1 = canvas.width / 2.5;
-		var y1 = canvas.height / 2;
+		var x1 = canvas.width/2;
+		var y1 = canvas.height/2;
         redrawCanvas();
         draw(x1, y1);
       }
@@ -97,8 +115,8 @@
 		  var imgData = context.getImageData(0,0, canvas.width, canvas.height);
 
 		  // Resize original canvas
-		  canvas.width = window.innerWidth;
-		  canvas.height = window.innerHeight;
+		  canvas.width = $("#canvas-div").width()/2;
+		  canvas.height = $("#canvas-div").height()/2;
 
 		  // Copy back to resized canvas
 		  context.putImageData(imgData, 0, 0);
@@ -113,8 +131,8 @@
 		  tmpCtx.drawImage(canvas, 0, 0);
 
 		  // Resize original canvas
-		  canvas.width = window.innerWidth;
-		  canvas.height = window.innerHeight;
+		  canvas.width = $("#canvas-div").width();
+		  canvas.height = $("#canvas-div").height();
 
 		  // Copy back to resized canvas
 		  context = canvas.getContext('2d');
@@ -123,12 +141,17 @@
     }
 
 	function draw(x1, y1) {
-	        if (x1 <= 550) {
-		      var rw = 90;
-		      var re = 10;
+	        if (x1 <= 249) {
+		      var rw = 55; //radius of entire wheel
+		      var re = 6; // radius of each circle
+	        }
+		    else if (x1 > 250 && x1 <= 400) {
+		      var rw = 65;
+		      var re = 7.5;
+
 		    } else {
-		      var rw = 120;
-		      var re = 14;
+		      var rw = 70;
+		      var re = 8.5;
 		    }
 	          for (var i=1;i<=hours;i++)  {
 	              drawCircles(i, x1, y1, rw, re);
@@ -185,15 +208,19 @@
 				var y = y1 + (m * (Math.sin(Math.radians(angle+11.25))));
 				context.beginPath();
 				context.fillStyle = "black";
-				context.font = '16pt Helvetica'
+				if (rw <= 65) {
+				    context.font = '10pt Helvetica'
+				} else {
+				    context.font = '13pt Helvetica'
+				}
 				var emotion_label = emotion[0][0].toUpperCase() + emotion[0].substr(1)
-				context.fillText(emotion_label, x-15, y);
+				context.fillText(emotion_label, x-17, y);
 				context.fill();
 				context.closePath();
 			} else {
 			if(l==1){
-				m += 30;
-				c += 7;
+				m += 20;
+				c += 5;
 			}
 			// x, y center of each circle
 			var x = x1 + (m * (Math.cos(Math.radians(angle+11.25))));
