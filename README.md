@@ -21,8 +21,8 @@ To check if they're installed:
 * $ pip install mysql-python
 * then update settings file, for example:
 * DATABASES = 
- {
-	     'default': {<br/>
+ {<br/>
+	  'default': {<br/>
 	    	'ENGINE': 'django.db.backends.mysql', #this is standard <br/>
 	    	'NAME': ‘escpdigital$default’, #replace this with your database name <br/>
 	    	'USER': ‘escpdigital’, #replace with your db user name <br/>
