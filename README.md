@@ -20,13 +20,14 @@ To check if they're installed:
 4. Set up mysql database
 * $ pip install mysql-python
 * then update settings file, for example:
-* DATABASES = {
-	    * 'default': {
-	    *	'ENGINE': 'django.db.backends.mysql', #this is standard
-	    *	'NAME': ‘escpdigital$default’, #replace this with your database name
-	    *	'USER': ‘escpdigital’, #replace with your db user name
-	    *	'PASSWORD': 'escpescp', #replace with your db password
-	    *	'HOST' : ‘escpdigital.mysql.pythonanywhere-services.com’, #replace with your host name
+* DATABASES = 
+ {
+	     'default': {<br/>
+	    	'ENGINE': 'django.db.backends.mysql', #this is standard <br/>
+	    	'NAME': ‘escpdigital$default’, #replace this with your database name <br/>
+	    	'USER': ‘escpdigital’, #replace with your db user name <br/>
+	    	'PASSWORD': 'escpescp', #replace with your db password <br/>
+	    	'HOST' : ‘escpdigital.mysql.pythonanywhere-services.com’, #replace with your host name <br/>
 	    }
 
 	}
