@@ -14,8 +14,10 @@ $ virtualenv env
 $ source env/bin/activate
 
 3. Get code and install packages
-$ git clone https://github.com/paula628/gew-test.git 
+$ git clone https://github.com/paula628/gew-test.git
+
 $ cd gew-test
+
 $ pip install -r requirements.txt
 
 4. Set up mysql database
