@@ -52,8 +52,8 @@ To check if they're installed:
 
 	* name: GEW Questionnaire
 	* launch url: www.new-server-url.com/base/login
-	* consumer key: escpdigitalescpdigital
-	* shared secret: secret
+	* consumer key: anykey #key and secret could be as you want
+	* shared secret: anysecret
 	* user_id, username, email —> required by tool
 	* date and time restrictions —> enter the désired display after or until date 
 
